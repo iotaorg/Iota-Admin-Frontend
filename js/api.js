@@ -4164,7 +4164,7 @@
                      }));
 
                     if ((user_info.institute) && (user_info.institute.id) && user_info.institute.id == "1") {
-                        var $arquivos = {
+                        /*var $arquivos = {
                             'Prêmio Cidade da Criança': 'exemplo-premio-cidade-da-crianca',
                             'Prêmio Cidades do Esporte': 'exemplo-premio-cidades-do-esporte',
                             'Prêmio Bens Naturais Comuns': 'exemplo-premio-bens-naturais',
@@ -4180,7 +4180,7 @@
                                 _user: $.cookie("user.id"),
                                 e: 'Modelo de arquivo'
                             }) + k + '": <a href="/frontend/arquivos-exemplo-premio/' + v + '.xls?v=2">XLS</a><br />' );
-                        });
+                        });*/
 
                     }
                      if (user_info.regions_enabled) {
