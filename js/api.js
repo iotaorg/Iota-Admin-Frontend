@@ -5104,16 +5104,26 @@
                          label: "Direção de classificação",
                          input: ["select,sort_direction,iselect"]
                      });
+
+                     if (!(user_info.institute.metadata.ods == 1)){
+                         newform.push({
+                             label: "Referência de Meta",
+                             input: ["select,goal_operator,iselect200px", "text,goal,itext200px"]
+                         });
+                         newform.push({
+                             label:   "Fonte (Ref. de Meta)",
+                             input: ["select,goal_source,iselect source", "text,goal_source_new,itext300px"]
+                         });
+                     }
+                     else{
+                        newform.push({
+                         label: "ODS relacionados",
+                         input: ["text,goal_source,itext"]
+                        });
+                    }
+
                      newform.push({
-                         label: "Referência de Meta",
-                         input: ["select,goal_operator,iselect200px", "text,goal,itext200px"]
-                     });
-                     newform.push({
-                         label: "Fonte (Ref. de Meta)",
-                         input: ["select,goal_source,iselect source", "text,goal_source_new,itext300px"]
-                     });
-                     newform.push({
-                         label: "Explicação (Ref. de Meta)",
+                         label: user_info.institute.metadata.ods == 1 ? "Metas ODS" : "Explicação (Ref. de Meta)",
                          input: ["textarea,goal_explanation,itext"]
                      });
                      newform.push({

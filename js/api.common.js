@@ -182,6 +182,7 @@ $.extend({
         }
     },
     convertNumberToBd: function (number) {
+        if (!number) return '';
         var new_number = number.replace(",", ".");
 
         return new_number;
