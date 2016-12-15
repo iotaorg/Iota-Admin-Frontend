@@ -5130,10 +5130,12 @@
                          label: "Eixo",
                          input: ["select,axis_id,iselect"]
                      });
-                     newform.push({
-                         label: "Fonte",
-                         input: ["select,source,iselect source", "text,source_new,itext300px"]
-                     });
+                     if (!(user_info.institute.metadata.hide_indicator_source == 1)){
+                         newform.push({
+                             label: "Fonte",
+                             input: ["select,source,iselect source", "text,source_new,itext300px"]
+                         });
+                     }
                      newform.push({
                          label: "Tags",
                          input: ["text,tags,itext"]
@@ -5153,8 +5155,13 @@
                      $(formbuild).find(".form").width(890);
                      $(formbuild).find(".form-buttons").width($(formbuild).find(".form").width());
 
-                     setNewSource($("#dashboard-content .content select#goal_source"), $("#dashboard-content .content input#goal_source_new"));
-                     setNewSource($("#dashboard-content .content select#source"), $("#dashboard-content .content input#source_new"));
+                     if (!(user_info.institute.metadata.ods == 1)){
+
+
+                         setNewSource($("#dashboard-content .content select#goal_source"), $("#dashboard-content .content input#goal_source_new"));
+                         setNewSource($("#dashboard-content .content select#source"), $("#dashboard-content .content input#source_new"));
+
+                     }
 
                      $(formbuild).find("#name").qtip($.extend(true, {}, qtip_input, {
                          content: "Nome do Indicador"
@@ -6202,17 +6209,17 @@
                                              }
                                          });
 
-                                         $(formbuild).find("textarea#formula").val(data.formula);
-                                         $(formbuild).find("textarea#explanation").val(data.explanation);
-                                         $(formbuild).find("select#sort_direction").val(String(data.sort_direction));
-                                         $(formbuild).find("input#goal").val($.convertNumberFromBd(data.goal));
-                                         $(formbuild).find("select#goal_source").val(data.goal_source);
-                                         $(formbuild).find("select#goal_operator").val(String(data.goal_operator));
-                                         $(formbuild).find("textarea#goal_explanation").val(data.goal_explanation);
-                                         $(formbuild).find("select#axis_id").val(data.axis_id);
-                                         $(formbuild).find("select#source").val(data.source);
-                                         $(formbuild).find("input#tags").val(data.tags);
-                                         $(formbuild).find("textarea#observations").val(data.observations);
+                                         $(formbuild).find("#formula").val(data.formula);
+                                         $(formbuild).find("#explanation").val(data.explanation);
+                                         $(formbuild).find("#sort_direction").val(String(data.sort_direction));
+                                         $(formbuild).find("#goal").val($.convertNumberFromBd(data.goal));
+                                         $(formbuild).find("#goal_source").val(data.goal_source);
+                                         $(formbuild).find("#goal_operator").val(String(data.goal_operator));
+                                         $(formbuild).find("#goal_explanation").val(data.goal_explanation);
+                                         $(formbuild).find("#axis_id").val(data.axis_id);
+                                         $(formbuild).find("#source").val(data.source);
+                                         $(formbuild).find("#tags").val(data.tags);
+                                         $(formbuild).find("#observations").val(data.observations);
 
                                          $.each(data.network_configs, function(index, item) {
                                              if (item.network_id == user_info.network) {
