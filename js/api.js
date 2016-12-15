@@ -3260,10 +3260,15 @@
                          label: "Período",
                          input: ["select,period,iselect"]
                      });
-                     newform.push({
-                         label: "Fonte",
-                         input: ["select,source,iselect source", "text,source_new,itext300px"]
-                     });
+
+                    if (!(user_info.institute.metadata.hide_variable_source == 1)){
+
+                         newform.push({
+                             label: "Fonte",
+                             input: ["select,source,iselect source", "text,source_new,itext300px"]
+                         });
+                     }
+
                      newform.push({
                          label: "Variável básica",
                          input: ["checkbox,is_basic,icheckbox"]
