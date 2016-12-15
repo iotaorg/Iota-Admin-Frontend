@@ -10871,11 +10871,18 @@
                      });
 
 
-                     // if (user_info.institute.id == 1) {
                      newform.push({
                          label: "Carta Compromisso (PDF)",
                          input: ["file,carta_compromisso,itext"]
                      });
+
+                     if (user_info.institute.metadata.prestar_contas == 1) {
+                         newform.push({
+                             label: "Prestação de contas (PDF)",
+                             input: ["file,prestacao_de_contas,itext"]
+                         });
+                     }
+
                      newform.push({
                          label: "Programa de Metas (PDF)",
                          input: ["file,programa_metas,itext"]
@@ -10996,6 +11003,13 @@
                                              $("input#arquivo_imagem_cidade").after("<br /><img src='" + data.files.imagem_cidade + "' border='0' class='imagem_preview'>");
                                          }
                                      }
+
+                                     if (user_info.institute.metadata.prestar_contas == 1) {
+                                         if (data.files.prestacao_de_co) {
+                                             $("input#arquivo_prestacao_de_contas").after("<br />[<a href='" + data.files.prestacao_de_co + "' class='link-files' target='_blank'> arquivo atual </a>]");
+                                         }
+                                     }
+
                                      if (user_info.institute.id == 2) {
                                          if (data.files.logo_movimento) {
                                              $("input#arquivo_logo_movimento").after("<br /><img src='" + data.files.logo_movimento + "' border='0' height='60' class='logo_preview'>");
@@ -11256,7 +11270,7 @@
                              }
                          }
 
-                         var files = ["programa_metas", "carta_compromisso", "logo_movimento", "imagem_cidade"];
+                         var files = ["programa_metas", "carta_compromisso", "logo_movimento", "prestacao_de_contas", "imagem_cidade"];
 
                          var files_sent = [];
                          for (i = 0; i < files.length; i++) {
