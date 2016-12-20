@@ -3240,10 +3240,14 @@
                          label: "Nome",
                          input: ["text,name,itext"]
                      });
-                     newform.push({
-                         label: "Apelido",
-                         input: ["text,cognomen,itext"]
-                     });
+
+                     if (!(user_info.institute.metadata.hide_cognomen == 1)){
+
+                         newform.push({
+                             label: "Apelido",
+                             input: ["text,cognomen,itext"]
+                         });
+                     }
                      newform.push({
                          label: "Explicação",
                          input: ["textarea,explanation,itext"]
@@ -3371,7 +3375,7 @@
                              $(".form-aviso").setWarning({
                                  msg: "Por favor informe o Nome"
                              });
-                         } else if ($(this).parent().parent().find("#cognomen").val() == "") {
+                         } else if ( $(this).parent().parent().find("#cognomen").val() == "") {
                              $(".form-aviso").setWarning({
                                  msg: "Por favor informe o Apelido"
                              });
@@ -3399,9 +3403,6 @@
                                  name: "variable." + action + ".name",
                                  value: $(this).parent().parent().find("#name").val()
                              }, {
-                                 name: "variable." + action + ".cognomen",
-                                 value: $(this).parent().parent().find("#cognomen").val()
-                             }, {
                                  name: "variable." + action + ".explanation",
                                  value: $(this).parent().parent().find("#explanation").val()
                              }, {
@@ -3419,6 +3420,18 @@
                                  name: "variable." + action + ".source",
                                  value: $(this).parent().parent().find("#source option:selected").val()
                              });
+
+                             if ( $(this).parent().parent().find("#cognomen").val() ){
+                                  args.push({
+                                     name: "variable." + action + ".cognomen",
+                                     value: $(this).parent().parent().find("#cognomen").val()
+                                 });
+                              }else{
+                                 args.push({
+                                     name: "variable." + action + ".cognomen",
+                                     value: ''
+                                 });
+                              }
 
                              if ($(this).parent().parent().find("#is_basic").attr("checked")) {
                                  args.push({
@@ -3449,12 +3462,33 @@
                                  error: function(data) {
                                      switch (data.status) {
                                          case 400:
-                                             $("#aviso").setWarning({
-                                                 msg: "Erro ao $$operacao. ($$codigo)".render2({
-                                                     codigo: $.trataErro(data),
-                                                     operacao: txtOption
-                                                 })
-                                             });
+
+                                            var nomecodigo = $.trataErro(data);
+
+                                            if ( /cognomen\.invalid/.test(nomecodigo) ){
+                                                $("#aviso").setWarning({
+                                                     msg: "Erro ao $$operacao. Este nome já foi utilizado em outra váriavel.".render2({
+                                                         codigo: nomecodigo,
+                                                         operacao: txtOption
+                                                     })
+                                                 });
+                                            }else if ( /explanation\./.test(nomecodigo) ){
+                                                $("#aviso").setWarning({
+                                                     msg: "Erro ao $$operacao. Explicação inválida.".render2({
+                                                         codigo: nomecodigo,
+                                                         operacao: txtOption
+                                                     })
+                                                 });
+
+                                            }else{
+
+                                                 $("#aviso").setWarning({
+                                                     msg: "Erro ao $$operacao. ($$codigo)".render2({
+                                                         codigo: nomecodigo,
+                                                         operacao: txtOption
+                                                     })
+                                                 });
+                                             }
                                              break;
                                      }
                                      $("#dashboard-content .content .botao-form[ref='enviar']").show();
