@@ -10953,7 +10953,7 @@
                          input: ["file,carta_compromisso,itext"]
                      });
 
-                     if (user_info.institute.metadata.prestar_contas == 1) {
+                     if (user_info.institute.metadata.prestar_contas == 1 && user_info.metadata.prog_meta == 1 ) {
                          newform.push({
                              label: "Prestação de contas (PDF)",
                              input: ["file,prestacao_de_contas,itext"]
