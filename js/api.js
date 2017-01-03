@@ -1804,6 +1804,7 @@
                              input: ["select,network_id,iselect"]
                          });
                      }
+
                      newform.push({
                          label: "Nome",
                          input: ["text,name,itext"]
@@ -1825,6 +1826,13 @@
                          input: ["select,city_id,iselect"]
                      });
 
+                     if ((user_info.institute.metadata.prog_meta == 1)) {
+                         newform.push({
+                             label: "Programa de metas",
+                             input: ["select,prog_meta,iselect"]
+                         });
+                     }
+
                      var formbuild = $("#dashboard-content .content").append(buildForm(newform, txtOption));
                      $(formbuild).find("div .field:odd").addClass("odd");
                      $(formbuild).find(".form-buttons").width($(formbuild).find(".form").width());
@@ -1838,6 +1846,10 @@
                      $(formbuild).find("#password").qtip($.extend(true, {}, qtip_input, {
                          content: "Utilize letras e números e pelo menos 8 caracteres."
                      }));
+
+                     $.each(['Recusado', 'Aprovado'], function(index, item) {
+                         $("#prog_meta").append($("<option></option>").val(index).html(item));
+                     });
 
                      if (user_info.roles[0] == "superadmin") {
                          $.ajax({
@@ -1899,6 +1911,10 @@
                                                  });
                                              }
                                          }
+                                         if (data.metadata.prog_meta == 1) {
+                                             $("#prog_meta").val('1');
+                                         }
+
                                          break;
                                  }
                              },
@@ -1950,6 +1966,9 @@
                                  var url_action = $.getUrlVar("url");
                              }
 
+                             var metadata = {
+                                 prog_meta: $('#prog_meta').val()
+                             };
                              args = [{
                                  name: "api_key",
                                  value: $.cookie("key")
@@ -1965,6 +1984,9 @@
                              }, {
                                  name: "user." + action + ".city_id",
                                  value: $(this).parent().parent().find("#city_id option:selected").val()
+                             }, {
+                                 name: "user." + action + ".metadata",
+                                 value: JSON.stringify(metadata)
                              }];
 
                              if (user_info.roles[0] == "superadmin") {
@@ -3241,7 +3263,7 @@
                          input: ["text,name,itext"]
                      });
 
-                     if (!(user_info.institute.metadata.hide_cognomen == 1)){
+                     if (!(user_info.institute.metadata.hide_cognomen == 1)) {
 
                          newform.push({
                              label: "Apelido",
@@ -3265,7 +3287,7 @@
                          input: ["select,period,iselect"]
                      });
 
-                    if (!(user_info.institute.metadata.hide_variable_source == 1)){
+                     if (!(user_info.institute.metadata.hide_variable_source == 1)) {
 
                          newform.push({
                              label: "Fonte",
@@ -3375,7 +3397,7 @@
                              $(".form-aviso").setWarning({
                                  msg: "Por favor informe o Nome"
                              });
-                         } else if ( $(this).parent().parent().find("#cognomen").val() == "") {
+                         } else if ($(this).parent().parent().find("#cognomen").val() == "") {
                              $(".form-aviso").setWarning({
                                  msg: "Por favor informe o Apelido"
                              });
@@ -3421,17 +3443,17 @@
                                  value: $(this).parent().parent().find("#source option:selected").val()
                              });
 
-                             if ( $(this).parent().parent().find("#cognomen").val() ){
-                                  args.push({
+                             if ($(this).parent().parent().find("#cognomen").val()) {
+                                 args.push({
                                      name: "variable." + action + ".cognomen",
                                      value: $(this).parent().parent().find("#cognomen").val()
                                  });
-                              }else{
+                             } else {
                                  args.push({
                                      name: "variable." + action + ".cognomen",
                                      value: ''
                                  });
-                              }
+                             }
 
                              if ($(this).parent().parent().find("#is_basic").attr("checked")) {
                                  args.push({
@@ -3463,24 +3485,24 @@
                                      switch (data.status) {
                                          case 400:
 
-                                            var nomecodigo = $.trataErro(data);
+                                             var nomecodigo = $.trataErro(data);
 
-                                            if ( /cognomen\.invalid/.test(nomecodigo) ){
-                                                $("#aviso").setWarning({
+                                             if (/cognomen\.invalid/.test(nomecodigo)) {
+                                                 $("#aviso").setWarning({
                                                      msg: "Erro ao $$operacao. Este nome já foi utilizado em outra váriavel.".render2({
                                                          codigo: nomecodigo,
                                                          operacao: txtOption
                                                      })
                                                  });
-                                            }else if ( /explanation\./.test(nomecodigo) ){
-                                                $("#aviso").setWarning({
+                                             } else if (/explanation\./.test(nomecodigo)) {
+                                                 $("#aviso").setWarning({
                                                      msg: "Erro ao $$operacao. Explicação inválida.".render2({
                                                          codigo: nomecodigo,
                                                          operacao: txtOption
                                                      })
                                                  });
 
-                                            }else{
+                                             } else {
 
                                                  $("#aviso").setWarning({
                                                      msg: "Erro ao $$operacao. ($$codigo)".render2({
@@ -4024,7 +4046,7 @@
                                                          erro: $.trataErro(data)
                                                      })
                                                  });
-                                                 alert(JSON.stringify(data));
+                                                 // alert(JSON.stringify(data));
                                                  $("#dashboard-content .content .botao-form[ref='cancelar']").html("$$e".render({
                                                      e: 'Voltar'
                                                  }));
@@ -4202,26 +4224,26 @@
                          user: user_info.id
                      }));
 
-                    if ((user_info.institute) && (user_info.institute.id) && user_info.institute.id == "1") {
-                        /*var $arquivos = {
-                            'Prêmio Cidade da Criança': 'exemplo-premio-cidade-da-crianca',
-                            'Prêmio Cidades do Esporte': 'exemplo-premio-cidades-do-esporte',
-                            'Prêmio Bens Naturais Comuns': 'exemplo-premio-bens-naturais',
-                            'Prêmio Cidades Participativas': 'exemplo-premio-cidades-participativas',
-                            'Prêmio Cidade e Cultura': 'exemplo-premio-cidade-e-cultura',
-                            'Prêmio Educação para a Sustentabilidade': 'exemplo-premio-educacao-e-sus',
-                            'Prêmio Mobilidade': 'exemplo-premio-mobil',
-                            'Prêmio Cidades e Saúde': 'exemplo-premio-cidades-e-saude'
-                        };
+                     if ((user_info.institute) && (user_info.institute.id) && user_info.institute.id == "1") {
+                         /*var $arquivos = {
+                             'Prêmio Cidade da Criança': 'exemplo-premio-cidade-da-crianca',
+                             'Prêmio Cidades do Esporte': 'exemplo-premio-cidades-do-esporte',
+                             'Prêmio Bens Naturais Comuns': 'exemplo-premio-bens-naturais',
+                             'Prêmio Cidades Participativas': 'exemplo-premio-cidades-participativas',
+                             'Prêmio Cidade e Cultura': 'exemplo-premio-cidade-e-cultura',
+                             'Prêmio Educação para a Sustentabilidade': 'exemplo-premio-educacao-e-sus',
+                             'Prêmio Mobilidade': 'exemplo-premio-mobil',
+                             'Prêmio Cidades e Saúde': 'exemplo-premio-cidades-e-saude'
+                         };
 
-                        $.each($arquivos, function(k, v) {
-                            formbuild.find(".models").append('$$e para "'.render({
-                                _user: $.cookie("user.id"),
-                                e: 'Modelo de arquivo'
-                            }) + k + '": <a href="/frontend/arquivos-exemplo-premio/' + v + '.xls?v=2">XLS</a><br />' );
-                        });*/
+                         $.each($arquivos, function(k, v) {
+                             formbuild.find(".models").append('$$e para "'.render({
+                                 _user: $.cookie("user.id"),
+                                 e: 'Modelo de arquivo'
+                             }) + k + '": <a href="/frontend/arquivos-exemplo-premio/' + v + '.xls?v=2">XLS</a><br />' );
+                         });*/
 
-                    }
+                     }
                      if (user_info.regions_enabled) {
                          formbuild.find(".models").append('$$e: <a href="/dados/usuario/$$_user/regiao_exemplo.csv">CSV</a> <a href="/dados/usuario/$$_user/regiao_exemplo.xls">XLS</a><br />'.render({
                              _user: $.cookie("user.id"),
@@ -5144,22 +5166,21 @@
                          input: ["select,sort_direction,iselect"]
                      });
 
-                     if (!(user_info.institute.metadata.ods == 1)){
+                     if (!(user_info.institute.metadata.ods == 1)) {
                          newform.push({
                              label: "Referência de Meta",
                              input: ["select,goal_operator,iselect200px", "text,goal,itext200px"]
                          });
                          newform.push({
-                             label:   "Fonte (Ref. de Meta)",
+                             label: "Fonte (Ref. de Meta)",
                              input: ["select,goal_source,iselect source", "text,goal_source_new,itext300px"]
                          });
+                     } else {
+                         newform.push({
+                             label: "ODS relacionados",
+                             input: ["text,goal_source,itext"]
+                         });
                      }
-                     else{
-                        newform.push({
-                         label: "ODS relacionados",
-                         input: ["text,goal_source,itext"]
-                        });
-                    }
 
                      newform.push({
                          label: user_info.institute.metadata.ods == 1 ? "Metas ODS" : "Explicação (Ref. de Meta)",
@@ -5169,7 +5190,7 @@
                          label: "Eixo",
                          input: ["select,axis_id,iselect"]
                      });
-                     if (!(user_info.institute.metadata.hide_indicator_source == 1)){
+                     if (!(user_info.institute.metadata.hide_indicator_source == 1)) {
                          newform.push({
                              label: "Fonte",
                              input: ["select,source,iselect source", "text,source_new,itext300px"]
@@ -5194,7 +5215,7 @@
                      $(formbuild).find(".form").width(890);
                      $(formbuild).find(".form-buttons").width($(formbuild).find(".form").width());
 
-                     if (!(user_info.institute.metadata.ods == 1)){
+                     if (!(user_info.institute.metadata.ods == 1)) {
 
 
                          setNewSource($("#dashboard-content .content select#goal_source"), $("#dashboard-content .content input#goal_source_new"));
@@ -6749,10 +6770,10 @@
 
                      var redeid, redeparam = $.getUrlVar("redeid");
                      if (redeparam == undefined && (window.location.href.indexOf("http://indicadores.cidadessustentaveis.org.br") >= 0)) {
-                        //redeid = '1';
-                     }else if ( /^[0-9]+$/.test(redeparam) ) {
+                         //redeid = '1';
+                     } else if (/^[0-9]+$/.test(redeparam)) {
                          redeid = +redeparam;
-                     }/* else = all ou outras strings = todos indicadores */
+                     } /* else = all ou outras strings = todos indicadores */
 
                      $.ajax({
                          type: 'GET',
@@ -7943,7 +7964,7 @@
                                                  if (/_var_/.test(o.name)) {
                                                      setup_jStepper(o, 'num');
                                                  } else {
-                                                     setup_jStepper(o, /inum/.test(o.className) ? 1 : 0 );
+                                                     setup_jStepper(o, /inum/.test(o.className) ? 1 : 0);
                                                  }
                                              })
                                          }
