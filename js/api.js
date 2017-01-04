@@ -10953,12 +10953,20 @@
                          input: ["file,carta_compromisso,itext"]
                      });
 
-                     if (user_info.institute.metadata.prestar_contas == 1 && user_info.metadata.prog_meta == 1 ) {
+                     if (user_info.institute.metadata.prestar_contas == 1 ) {
                          newform.push({
                              label: "Prestação de contas (PDF)",
-                             input: ["file,prestacao_de_contas,itext"]
+                             input: ["file,prestacao_de_co,itext"]
                          });
                      }
+
+                     if (user_info.metadata.prog_meta == 1 ) {
+                         newform.push({
+                             label: "Arquivo da lei (PDF)",
+                             input: ["file,arq_lei,itext"]
+                         });
+                     }
+
 
                      newform.push({
                          label: "Programa de Metas (PDF)",
@@ -11083,9 +11091,14 @@
 
                                      if (user_info.institute.metadata.prestar_contas == 1) {
                                          if (data.files.prestacao_de_co) {
-                                             $("input#arquivo_prestacao_de_contas").after("<br />[<a href='" + data.files.prestacao_de_co + "' class='link-files' target='_blank'> arquivo atual </a>]");
+                                             $("input#arquivo_prestacao_de_co").after("<br />[<a href='" + data.files.prestacao_de_co + "' class='link-files' target='_blank'> arquivo atual </a>]");
                                          }
                                      }
+
+                                     if (data.files.arq_lei) {
+                                         $("input#arquivo_arq_lei").after("<br />[<a href='" + data.files.arq_lei + "' class='link-files' target='_blank'> arquivo atual </a>]");
+                                     }
+
 
                                      if (user_info.institute.id == 2) {
                                          if (data.files.logo_movimento) {
@@ -11347,7 +11360,7 @@
                              }
                          }
 
-                         var files = ["programa_metas", "carta_compromisso", "logo_movimento", "prestacao_de_contas", "imagem_cidade"];
+                         var files = ["programa_metas", "carta_compromisso", "logo_movimento", "prestacao_de_co", 'arq_lei', "imagem_cidade"];
 
                          var files_sent = [];
                          for (i = 0; i < files.length; i++) {
