@@ -3455,7 +3455,7 @@
                                  });
                              }
 
-                             if ($(this).parent().parent().find("#is_basic").attr("checked")) {
+                             if ($(this).parent().parent().find("#is_basic").prop("checked")) {
                                  args.push({
                                      name: "variable." + action + ".is_basic",
                                      value: 1
@@ -3683,7 +3683,7 @@
                                                          var display_in_home = 1;
                                                          $(this).removeClass("admin_checked");
                                                      } else {
-                                                         var display_in_home = ($(this).attr("checked")) ? 0 : 1;
+                                                         var display_in_home = ($(this).prop("checked")) ? 0 : 1;
                                                      }
 
                                                      if (!data_config[$(this).attr("var-id")]) {
@@ -4737,7 +4737,7 @@
                                  });
 
                                  $("input.chk-all").bind('click', function(index, item) {
-                                     var checked = ($(this).attr("checked")) ? true : false;
+                                     var checked = ($(this).prop("checked")) ? true : false;
                                      var year_index = $(this).attr("value");
                                      var filteredRows = oTable.$('tr', {
                                          "filter": "applied"
@@ -4807,7 +4807,7 @@
                          });
                          $(filteredRows).each(function(index, row) {
                              $(row).find("td input.chk-year").each(function(index, item) {
-                                 if ($(this).attr("checked")) {
+                                 if ($(this).prop("checked")) {
                                      args.push({
                                          name: "variable:" + $(this).attr("id").replace("chk", ""),
                                          value: 1
@@ -6024,7 +6024,7 @@
                                  }
 
                                  if ($(this).parent().parent().find("#indicator_type").val() == "varied" || $(this).parent().parent().find("#indicator_type").val() == "varied_dyn") {
-                                     if ($(this).parent().parent().find("#all_variations_variables_are_required").attr("checked")) {
+                                     if ($(this).parent().parent().find("#all_variations_variables_are_required").prop("checked")) {
                                          args.push({
                                              name: "indicator.create.all_variations_variables_are_required",
                                              value: 1
@@ -6133,7 +6133,7 @@
                                              value: $.cookie("key")
                                          }, {
                                              name: "indicator.network_config.upsert.unfolded_in_home",
-                                             value: ($("input#unfolded_in_home").attr("checked") ? 1 : 0)
+                                             value: ($("input#unfolded_in_home").prop("checked") ? 1 : 0)
                                          }];
 
                                          $.ajax({
@@ -6459,7 +6459,7 @@
 
 
                                  if ($(this).parent().parent().find("#indicator_type").val() == "varied" || $(this).parent().parent().find("#indicator_type").val() == "varied_dyn") {
-                                     if ($(this).parent().parent().find("#all_variations_variables_are_required").attr("checked")) {
+                                     if ($(this).parent().parent().find("#all_variations_variables_are_required").prop("checked")) {
                                          args.push({
                                              name: "indicator.update.all_variations_variables_are_required",
                                              value: 1
@@ -6651,7 +6651,7 @@
                                              value: $.cookie("key")
                                          }, {
                                              name: "indicator.network_config.upsert.unfolded_in_home",
-                                             value: ($("input#unfolded_in_home").attr("checked") ? 1 : 0)
+                                             value: ($("input#unfolded_in_home").prop("checked") ? 1 : 0)
                                          }];
                                          $.ajax({
                                              async: false,
@@ -7472,7 +7472,7 @@
                                  var validation = true;
 
                                  if (user_info.institute.id == 2) {
-                                     if ($(".tech_info #technical_information").val() == "" && (!$(".tech_info #hide_indicator").attr("checked")) && !(tech_info_id)) {
+                                     if ($(".tech_info #technical_information").val() == "" && (!$(".tech_info #hide_indicator").prop("checked")) && !(tech_info_id)) {
                                          validation = false;
                                      }
                                  } else {
@@ -7514,7 +7514,7 @@
                                      if (user_info.institute.id == 2) {
                                          args.push({
                                              name: "user.indicator_config." + action + ".hide_indicator",
-                                             value: ($(".tech_info #hide_indicator").attr("checked")) ? 1 : 0
+                                             value: ($(".tech_info #hide_indicator").prop("checked")) ? 1 : 0
                                          });
                                      }
 
@@ -8068,7 +8068,7 @@
                                          $("#no_data").after("Não possuo os dados.");
                                          $("#dashboard-content .content .filter_result .field:last").hide();
                                          $("#no_data").change(function() {
-                                             if ($(this).attr("checked")) {
+                                             if ($(this).prop("checked")) {
                                                  $("#dashboard-content .content .filter_result .field:last").show();
                                                  $("#goal").hide();
                                              } else {
@@ -8208,23 +8208,23 @@
                                                  });
                                              }
 
-                                             if (!informou_valores && !$("#no_data").attr("checked")) {
+                                             if (!informou_valores && !$("#no_data").prop("checked")) {
                                                  $(".filter_result .form-aviso").setWarning({
                                                      msg: "Por favor informe os valores"
                                                  });
-                                             } else if (!informou_valores_validos && !$("#no_data").attr("checked")) {
+                                             } else if (!informou_valores_validos && !$("#no_data").prop("checked")) {
                                                  $(".filter_result .form-aviso").setWarning({
                                                      msg: "Os valores devem ser apenas numéricos"
                                                  });
-                                             } else if (!informou_vvalores_validos && !$("#no_data").attr("checked")) {
+                                             } else if (!informou_vvalores_validos && !$("#no_data").prop("checked")) {
                                                  $(".filter_result .form-aviso").setWarning({
                                                      msg: "Os valores devem ser apenas números inteiros"
                                                  });
-                                             } else if (!informou_fontes && !$("#no_data").attr("checked")) {
+                                             } else if (!informou_fontes && !$("#no_data").prop("checked")) {
                                                  $(".filter_result .form-aviso").setWarning({
                                                      msg: "Por favor informe a fonte dos valores"
                                                  });
-                                             } else if ($("#no_data").attr("checked") && $("#dashboard-content .content").find("#justification_of_missing_field").val() == "") {
+                                             } else if ($("#no_data").prop("checked") && $("#dashboard-content .content").find("#justification_of_missing_field").val() == "") {
                                                  $(".filter_result .form-aviso").setWarning({
                                                      msg: "Por favor informe a justificativa"
                                                  });
@@ -8260,7 +8260,7 @@
                                                              var prefix = "";
                                                          }
 
-                                                         if (!$("#dashboard-content .content input#no_data").attr("checked")) {
+                                                         if (!$("#dashboard-content .content input#no_data").prop("checked")) {
                                                              args = [{
                                                                  name: "api_key",
                                                                  value: $.cookie("key")
@@ -8441,7 +8441,7 @@
                                                          }
 
                                                          var acao = "user.indicator." + data.action + ".";
-                                                         if ($("#dashboard-content .content input#no_data").attr("checked")) {
+                                                         if ($("#dashboard-content .content input#no_data").prop("checked")) {
                                                              args = [{
                                                                  name: "api_key",
                                                                  value: $.cookie("key")
@@ -11223,16 +11223,16 @@
                                                  value: $.cookie("key")
                                              }, {
                                                  name: "institute.update.users_can_edit_value",
-                                                 value: ($("input#users_can_edit_value_inst_" + item.id).attr("checked") ? 1 : 0)
+                                                 value: ($("input#users_can_edit_value_inst_" + item.id).prop("checked") ? 1 : 0)
                                              }, {
                                                  name: "institute.update.users_can_edit_groups",
-                                                 value: ($("input#users_can_edit_groups_inst_" + item.id).attr("checked") ? 1 : 0)
+                                                 value: ($("input#users_can_edit_groups_inst_" + item.id).prop("checked") ? 1 : 0)
                                              }, {
                                                  name: "institute.update.can_use_custom_css",
-                                                 value: ($("input#can_use_custom_css_inst_" + item.id).attr("checked") ? 1 : 0)
+                                                 value: ($("input#can_use_custom_css_inst_" + item.id).prop("checked") ? 1 : 0)
                                              }, {
                                                  name: "institute.update.can_use_custom_pages",
-                                                 value: ($("input#can_use_custom_pages_inst_" + item.id).attr("checked") ? 1 : 0)
+                                                 value: ($("input#can_use_custom_pages_inst_" + item.id).prop("checked") ? 1 : 0)
                                              }];
                                              $.ajax({
                                                  async: false,
