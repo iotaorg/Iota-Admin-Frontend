@@ -5912,7 +5912,7 @@
                      });
 
                      if (user_info.institute && user_info.institute.fixed_indicator_axis_id && user_info.user_type == 'user') {
-                         $("#axis_id option[value=" + user_info.institute.fixed_indicator_axis_id + "]").prop('selected', true);
+                         $("#axis_id option[value=" + user_info.institute.fixed_indicator_axis_id + "]").attr('selected', true);
                          $("#axis_id").attr('disabled', 'disabled');
                          $("#axis_id").attr('title', '$$x'.render({
                              x: 'Desabilitado'
