@@ -1828,7 +1828,7 @@
 
                      if ((user_info.institute.metadata.prog_meta == 1)) {
                          newform.push({
-                             label: "Programa de metas",
+                             label: "Plano de Metas",
                              input: ["select,prog_meta,iselect"]
                          });
                      }
@@ -10969,7 +10969,7 @@
 
 
                      newform.push({
-                         label: "Programa de Metas (PDF)",
+                         label: "Plano de Metas (PDF)",
                          input: ["file,programa_metas,itext"]
                      });
                      newform.push({
