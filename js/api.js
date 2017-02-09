@@ -10955,7 +10955,7 @@
 
                      if (user_info.institute.metadata.prestar_contas == 1 ) {
                          newform.push({
-                             label: "Prestação de contas (PDF)",
+                             label: "Relatório de prestação de contas (PDF)",
                              input: ["file,prestacao_de_co,itext"]
                          });
                      }
