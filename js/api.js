@@ -1804,6 +1804,7 @@
                              input: ["select,network_id,iselect"]
                          });
                      }
+
                      newform.push({
                          label: "Nome",
                          input: ["text,name,itext"]
@@ -1825,6 +1826,13 @@
                          input: ["select,city_id,iselect"]
                      });
 
+                     if ((user_info.institute.metadata.prog_meta == 1)) {
+                         newform.push({
+                             label: "Plano de Metas",
+                             input: ["select,prog_meta,iselect"]
+                         });
+                     }
+
                      var formbuild = $("#dashboard-content .content").append(buildForm(newform, txtOption));
                      $(formbuild).find("div .field:odd").addClass("odd");
                      $(formbuild).find(".form-buttons").width($(formbuild).find(".form").width());
@@ -1838,6 +1846,10 @@
                      $(formbuild).find("#password").qtip($.extend(true, {}, qtip_input, {
                          content: "Utilize letras e números e pelo menos 8 caracteres."
                      }));
+
+                     $.each(['Recusado', 'Aprovado'], function(index, item) {
+                         $("#prog_meta").append($("<option></option>").val(index).html(item));
+                     });
 
                      if (user_info.roles[0] == "superadmin") {
                          $.ajax({
@@ -1899,6 +1911,10 @@
                                                  });
                                              }
                                          }
+                                         if (data.metadata.prog_meta == 1) {
+                                             $("#prog_meta").val('1');
+                                         }
+
                                          break;
                                  }
                              },
@@ -1950,6 +1966,9 @@
                                  var url_action = $.getUrlVar("url");
                              }
 
+                             var metadata = {
+                                 prog_meta: $('#prog_meta').val()
+                             };
                              args = [{
                                  name: "api_key",
                                  value: $.cookie("key")
@@ -1965,6 +1984,9 @@
                              }, {
                                  name: "user." + action + ".city_id",
                                  value: $(this).parent().parent().find("#city_id option:selected").val()
+                             }, {
+                                 name: "user." + action + ".metadata",
+                                 value: JSON.stringify(metadata)
                              }];
 
                              if (user_info.roles[0] == "superadmin") {
@@ -3241,7 +3263,7 @@
                          input: ["text,name,itext"]
                      });
 
-                     if (!(user_info.institute.metadata.hide_cognomen == 1)){
+                     if (!(user_info.institute.metadata.hide_cognomen == 1)) {
 
                          newform.push({
                              label: "Apelido",
@@ -3265,7 +3287,7 @@
                          input: ["select,period,iselect"]
                      });
 
-                    if (!(user_info.institute.metadata.hide_variable_source == 1)){
+                     if (!(user_info.institute.metadata.hide_variable_source == 1)) {
 
                          newform.push({
                              label: "Fonte",
@@ -3375,7 +3397,7 @@
                              $(".form-aviso").setWarning({
                                  msg: "Por favor informe o Nome"
                              });
-                         } else if ( $(this).parent().parent().find("#cognomen").val() == "") {
+                         } else if ($(this).parent().parent().find("#cognomen").val() == "") {
                              $(".form-aviso").setWarning({
                                  msg: "Por favor informe o Apelido"
                              });
@@ -3421,19 +3443,19 @@
                                  value: $(this).parent().parent().find("#source option:selected").val()
                              });
 
-                             if ( $(this).parent().parent().find("#cognomen").val() ){
-                                  args.push({
+                             if ($(this).parent().parent().find("#cognomen").val()) {
+                                 args.push({
                                      name: "variable." + action + ".cognomen",
                                      value: $(this).parent().parent().find("#cognomen").val()
                                  });
-                              }else{
+                             } else {
                                  args.push({
                                      name: "variable." + action + ".cognomen",
                                      value: ''
                                  });
-                              }
+                             }
 
-                             if ($(this).parent().parent().find("#is_basic").attr("checked")) {
+                             if ($(this).parent().parent().find("#is_basic").prop("checked")) {
                                  args.push({
                                      name: "variable." + action + ".is_basic",
                                      value: 1
@@ -3463,24 +3485,24 @@
                                      switch (data.status) {
                                          case 400:
 
-                                            var nomecodigo = $.trataErro(data);
+                                             var nomecodigo = $.trataErro(data);
 
-                                            if ( /cognomen\.invalid/.test(nomecodigo) ){
-                                                $("#aviso").setWarning({
+                                             if (/cognomen\.invalid/.test(nomecodigo)) {
+                                                 $("#aviso").setWarning({
                                                      msg: "Erro ao $$operacao. Este nome já foi utilizado em outra váriavel.".render2({
                                                          codigo: nomecodigo,
                                                          operacao: txtOption
                                                      })
                                                  });
-                                            }else if ( /explanation\./.test(nomecodigo) ){
-                                                $("#aviso").setWarning({
+                                             } else if (/explanation\./.test(nomecodigo)) {
+                                                 $("#aviso").setWarning({
                                                      msg: "Erro ao $$operacao. Explicação inválida.".render2({
                                                          codigo: nomecodigo,
                                                          operacao: txtOption
                                                      })
                                                  });
 
-                                            }else{
+                                             } else {
 
                                                  $("#aviso").setWarning({
                                                      msg: "Erro ao $$operacao. ($$codigo)".render2({
@@ -3661,7 +3683,7 @@
                                                          var display_in_home = 1;
                                                          $(this).removeClass("admin_checked");
                                                      } else {
-                                                         var display_in_home = ($(this).attr("checked")) ? 0 : 1;
+                                                         var display_in_home = ($(this).prop("checked")) ? 0 : 1;
                                                      }
 
                                                      if (!data_config[$(this).attr("var-id")]) {
@@ -4024,7 +4046,7 @@
                                                          erro: $.trataErro(data)
                                                      })
                                                  });
-                                                 alert(JSON.stringify(data));
+                                                 // alert(JSON.stringify(data));
                                                  $("#dashboard-content .content .botao-form[ref='cancelar']").html("$$e".render({
                                                      e: 'Voltar'
                                                  }));
@@ -4202,26 +4224,26 @@
                          user: user_info.id
                      }));
 
-                    if ((user_info.institute) && (user_info.institute.id) && user_info.institute.id == "1") {
-                        /*var $arquivos = {
-                            'Prêmio Cidade da Criança': 'exemplo-premio-cidade-da-crianca',
-                            'Prêmio Cidades do Esporte': 'exemplo-premio-cidades-do-esporte',
-                            'Prêmio Bens Naturais Comuns': 'exemplo-premio-bens-naturais',
-                            'Prêmio Cidades Participativas': 'exemplo-premio-cidades-participativas',
-                            'Prêmio Cidade e Cultura': 'exemplo-premio-cidade-e-cultura',
-                            'Prêmio Educação para a Sustentabilidade': 'exemplo-premio-educacao-e-sus',
-                            'Prêmio Mobilidade': 'exemplo-premio-mobil',
-                            'Prêmio Cidades e Saúde': 'exemplo-premio-cidades-e-saude'
-                        };
+                     if ((user_info.institute) && (user_info.institute.id) && user_info.institute.id == "1") {
+                         /*var $arquivos = {
+                             'Prêmio Cidade da Criança': 'exemplo-premio-cidade-da-crianca',
+                             'Prêmio Cidades do Esporte': 'exemplo-premio-cidades-do-esporte',
+                             'Prêmio Bens Naturais Comuns': 'exemplo-premio-bens-naturais',
+                             'Prêmio Cidades Participativas': 'exemplo-premio-cidades-participativas',
+                             'Prêmio Cidade e Cultura': 'exemplo-premio-cidade-e-cultura',
+                             'Prêmio Educação para a Sustentabilidade': 'exemplo-premio-educacao-e-sus',
+                             'Prêmio Mobilidade': 'exemplo-premio-mobil',
+                             'Prêmio Cidades e Saúde': 'exemplo-premio-cidades-e-saude'
+                         };
 
-                        $.each($arquivos, function(k, v) {
-                            formbuild.find(".models").append('$$e para "'.render({
-                                _user: $.cookie("user.id"),
-                                e: 'Modelo de arquivo'
-                            }) + k + '": <a href="/frontend/arquivos-exemplo-premio/' + v + '.xls?v=2">XLS</a><br />' );
-                        });*/
+                         $.each($arquivos, function(k, v) {
+                             formbuild.find(".models").append('$$e para "'.render({
+                                 _user: $.cookie("user.id"),
+                                 e: 'Modelo de arquivo'
+                             }) + k + '": <a href="/frontend/arquivos-exemplo-premio/' + v + '.xls?v=2">XLS</a><br />' );
+                         });*/
 
-                    }
+                     }
                      if (user_info.regions_enabled) {
                          formbuild.find(".models").append('$$e: <a href="/dados/usuario/$$_user/regiao_exemplo.csv">CSV</a> <a href="/dados/usuario/$$_user/regiao_exemplo.xls">XLS</a><br />'.render({
                              _user: $.cookie("user.id"),
@@ -4715,7 +4737,7 @@
                                  });
 
                                  $("input.chk-all").bind('click', function(index, item) {
-                                     var checked = ($(this).attr("checked")) ? true : false;
+                                     var checked = ($(this).prop("checked")) ? true : false;
                                      var year_index = $(this).attr("value");
                                      var filteredRows = oTable.$('tr', {
                                          "filter": "applied"
@@ -4785,7 +4807,7 @@
                          });
                          $(filteredRows).each(function(index, row) {
                              $(row).find("td input.chk-year").each(function(index, item) {
-                                 if ($(this).attr("checked")) {
+                                 if ($(this).prop("checked")) {
                                      args.push({
                                          name: "variable:" + $(this).attr("id").replace("chk", ""),
                                          value: 1
@@ -5144,22 +5166,21 @@
                          input: ["select,sort_direction,iselect"]
                      });
 
-                     if (!(user_info.institute.metadata.ods == 1)){
+                     if (!(user_info.institute.metadata.ods == 1)) {
                          newform.push({
                              label: "Referência de Meta",
                              input: ["select,goal_operator,iselect200px", "text,goal,itext200px"]
                          });
                          newform.push({
-                             label:   "Fonte (Ref. de Meta)",
+                             label: "Fonte (Ref. de Meta)",
                              input: ["select,goal_source,iselect source", "text,goal_source_new,itext300px"]
                          });
+                     } else {
+                         newform.push({
+                             label: "ODS relacionados",
+                             input: ["text,goal_source,itext"]
+                         });
                      }
-                     else{
-                        newform.push({
-                         label: "ODS relacionados",
-                         input: ["text,goal_source,itext"]
-                        });
-                    }
 
                      newform.push({
                          label: user_info.institute.metadata.ods == 1 ? "Meta ODS" : "Explicação (Ref. de Meta)",
@@ -5169,7 +5190,7 @@
                          label: "Eixo",
                          input: ["select,axis_id,iselect"]
                      });
-                     if (!(user_info.institute.metadata.hide_indicator_source == 1)){
+                     if (!(user_info.institute.metadata.hide_indicator_source == 1)) {
                          newform.push({
                              label: "Fonte",
                              input: ["select,source,iselect source", "text,source_new,itext300px"]
@@ -5194,7 +5215,7 @@
                      $(formbuild).find(".form").width(890);
                      $(formbuild).find(".form-buttons").width($(formbuild).find(".form").width());
 
-                     if (!(user_info.institute.metadata.ods == 1)){
+                     if (!(user_info.institute.metadata.ods == 1)) {
 
 
                          setNewSource($("#dashboard-content .content select#goal_source"), $("#dashboard-content .content input#goal_source_new"));
@@ -5891,7 +5912,7 @@
                      });
 
                      if (user_info.institute && user_info.institute.fixed_indicator_axis_id && user_info.user_type == 'user') {
-                         $("#axis_id option[value=" + user_info.institute.fixed_indicator_axis_id + "]").prop('selected', true);
+                         $("#axis_id option[value=" + user_info.institute.fixed_indicator_axis_id + "]").attr('selected', true);
                          $("#axis_id").attr('disabled', 'disabled');
                          $("#axis_id").attr('title', '$$x'.render({
                              x: 'Desabilitado'
@@ -6003,7 +6024,7 @@
                                  }
 
                                  if ($(this).parent().parent().find("#indicator_type").val() == "varied" || $(this).parent().parent().find("#indicator_type").val() == "varied_dyn") {
-                                     if ($(this).parent().parent().find("#all_variations_variables_are_required").attr("checked")) {
+                                     if ($(this).parent().parent().find("#all_variations_variables_are_required").prop("checked")) {
                                          args.push({
                                              name: "indicator.create.all_variations_variables_are_required",
                                              value: 1
@@ -6112,7 +6133,7 @@
                                              value: $.cookie("key")
                                          }, {
                                              name: "indicator.network_config.upsert.unfolded_in_home",
-                                             value: ($("input#unfolded_in_home").attr("checked") ? 1 : 0)
+                                             value: ($("input#unfolded_in_home").prop("checked") ? 1 : 0)
                                          }];
 
                                          $.ajax({
@@ -6438,7 +6459,7 @@
 
 
                                  if ($(this).parent().parent().find("#indicator_type").val() == "varied" || $(this).parent().parent().find("#indicator_type").val() == "varied_dyn") {
-                                     if ($(this).parent().parent().find("#all_variations_variables_are_required").attr("checked")) {
+                                     if ($(this).parent().parent().find("#all_variations_variables_are_required").prop("checked")) {
                                          args.push({
                                              name: "indicator.update.all_variations_variables_are_required",
                                              value: 1
@@ -6630,7 +6651,7 @@
                                              value: $.cookie("key")
                                          }, {
                                              name: "indicator.network_config.upsert.unfolded_in_home",
-                                             value: ($("input#unfolded_in_home").attr("checked") ? 1 : 0)
+                                             value: ($("input#unfolded_in_home").prop("checked") ? 1 : 0)
                                          }];
                                          $.ajax({
                                              async: false,
@@ -6749,10 +6770,10 @@
 
                      var redeid, redeparam = $.getUrlVar("redeid");
                      if (redeparam == undefined && (window.location.href.indexOf("http://indicadores.cidadessustentaveis.org.br") >= 0)) {
-                        //redeid = '1';
-                     }else if ( /^[0-9]+$/.test(redeparam) ) {
+                         //redeid = '1';
+                     } else if (/^[0-9]+$/.test(redeparam)) {
                          redeid = +redeparam;
-                     }/* else = all ou outras strings = todos indicadores */
+                     } /* else = all ou outras strings = todos indicadores */
 
                      $.ajax({
                          type: 'GET',
@@ -7451,7 +7472,7 @@
                                  var validation = true;
 
                                  if (user_info.institute.id == 2) {
-                                     if ($(".tech_info #technical_information").val() == "" && (!$(".tech_info #hide_indicator").attr("checked")) && !(tech_info_id)) {
+                                     if ($(".tech_info #technical_information").val() == "" && (!$(".tech_info #hide_indicator").prop("checked")) && !(tech_info_id)) {
                                          validation = false;
                                      }
                                  } else {
@@ -7493,7 +7514,7 @@
                                      if (user_info.institute.id == 2) {
                                          args.push({
                                              name: "user.indicator_config." + action + ".hide_indicator",
-                                             value: ($(".tech_info #hide_indicator").attr("checked")) ? 1 : 0
+                                             value: ($(".tech_info #hide_indicator").prop("checked")) ? 1 : 0
                                          });
                                      }
 
@@ -7943,7 +7964,7 @@
                                                  if (/_var_/.test(o.name)) {
                                                      setup_jStepper(o, 'num');
                                                  } else {
-                                                     setup_jStepper(o, /inum/.test(o.className) ? 1 : 0 );
+                                                     setup_jStepper(o, /inum/.test(o.className) ? 1 : 0);
                                                  }
                                              })
                                          }
@@ -8047,7 +8068,7 @@
                                          $("#no_data").after("Não possuo os dados.");
                                          $("#dashboard-content .content .filter_result .field:last").hide();
                                          $("#no_data").change(function() {
-                                             if ($(this).attr("checked")) {
+                                             if ($(this).prop("checked")) {
                                                  $("#dashboard-content .content .filter_result .field:last").show();
                                                  $("#goal").hide();
                                              } else {
@@ -8187,23 +8208,23 @@
                                                  });
                                              }
 
-                                             if (!informou_valores && !$("#no_data").attr("checked")) {
+                                             if (!informou_valores && !$("#no_data").prop("checked")) {
                                                  $(".filter_result .form-aviso").setWarning({
                                                      msg: "Por favor informe os valores"
                                                  });
-                                             } else if (!informou_valores_validos && !$("#no_data").attr("checked")) {
+                                             } else if (!informou_valores_validos && !$("#no_data").prop("checked")) {
                                                  $(".filter_result .form-aviso").setWarning({
                                                      msg: "Os valores devem ser apenas numéricos"
                                                  });
-                                             } else if (!informou_vvalores_validos && !$("#no_data").attr("checked")) {
+                                             } else if (!informou_vvalores_validos && !$("#no_data").prop("checked")) {
                                                  $(".filter_result .form-aviso").setWarning({
                                                      msg: "Os valores devem ser apenas números inteiros"
                                                  });
-                                             } else if (!informou_fontes && !$("#no_data").attr("checked")) {
+                                             } else if (!informou_fontes && !$("#no_data").prop("checked")) {
                                                  $(".filter_result .form-aviso").setWarning({
                                                      msg: "Por favor informe a fonte dos valores"
                                                  });
-                                             } else if ($("#no_data").attr("checked") && $("#dashboard-content .content").find("#justification_of_missing_field").val() == "") {
+                                             } else if ($("#no_data").prop("checked") && $("#dashboard-content .content").find("#justification_of_missing_field").val() == "") {
                                                  $(".filter_result .form-aviso").setWarning({
                                                      msg: "Por favor informe a justificativa"
                                                  });
@@ -8239,7 +8260,7 @@
                                                              var prefix = "";
                                                          }
 
-                                                         if (!$("#dashboard-content .content input#no_data").attr("checked")) {
+                                                         if (!$("#dashboard-content .content input#no_data").prop("checked")) {
                                                              args = [{
                                                                  name: "api_key",
                                                                  value: $.cookie("key")
@@ -8420,7 +8441,7 @@
                                                          }
 
                                                          var acao = "user.indicator." + data.action + ".";
-                                                         if ($("#dashboard-content .content input#no_data").attr("checked")) {
+                                                         if ($("#dashboard-content .content input#no_data").prop("checked")) {
                                                              args = [{
                                                                  name: "api_key",
                                                                  value: $.cookie("key")
@@ -10932,15 +10953,23 @@
                          input: ["file,carta_compromisso,itext"]
                      });
 
-                     if (user_info.institute.metadata.prestar_contas == 1) {
+                     if (user_info.institute.metadata.prestar_contas == 1 ) {
                          newform.push({
-                             label: "Prestação de contas (PDF)",
-                             input: ["file,prestacao_de_contas,itext"]
+                             label: "Relatório de prestação de contas (PDF)",
+                             input: ["file,prestacao_de_co,itext"]
                          });
                      }
 
+                     if (user_info.metadata.prog_meta == 1 ) {
+                         newform.push({
+                             label: "Arquivo da lei (PDF)",
+                             input: ["file,arq_lei,itext"]
+                         });
+                     }
+
+
                      newform.push({
-                         label: "Programa de Metas (PDF)",
+                         label: "Plano de Metas (PDF)",
                          input: ["file,programa_metas,itext"]
                      });
                      newform.push({
@@ -11062,9 +11091,14 @@
 
                                      if (user_info.institute.metadata.prestar_contas == 1) {
                                          if (data.files.prestacao_de_co) {
-                                             $("input#arquivo_prestacao_de_contas").after("<br />[<a href='" + data.files.prestacao_de_co + "' class='link-files' target='_blank'> arquivo atual </a>]");
+                                             $("input#arquivo_prestacao_de_co").after("<br />[<a href='" + data.files.prestacao_de_co + "' class='link-files' target='_blank'> arquivo atual </a>]");
                                          }
                                      }
+
+                                     if (data.files.arq_lei) {
+                                         $("input#arquivo_arq_lei").after("<br />[<a href='" + data.files.arq_lei + "' class='link-files' target='_blank'> arquivo atual </a>]");
+                                     }
+
 
                                      if (user_info.institute.id == 2) {
                                          if (data.files.logo_movimento) {
@@ -11189,16 +11223,16 @@
                                                  value: $.cookie("key")
                                              }, {
                                                  name: "institute.update.users_can_edit_value",
-                                                 value: ($("input#users_can_edit_value_inst_" + item.id).attr("checked") ? 1 : 0)
+                                                 value: ($("input#users_can_edit_value_inst_" + item.id).prop("checked") ? 1 : 0)
                                              }, {
                                                  name: "institute.update.users_can_edit_groups",
-                                                 value: ($("input#users_can_edit_groups_inst_" + item.id).attr("checked") ? 1 : 0)
+                                                 value: ($("input#users_can_edit_groups_inst_" + item.id).prop("checked") ? 1 : 0)
                                              }, {
                                                  name: "institute.update.can_use_custom_css",
-                                                 value: ($("input#can_use_custom_css_inst_" + item.id).attr("checked") ? 1 : 0)
+                                                 value: ($("input#can_use_custom_css_inst_" + item.id).prop("checked") ? 1 : 0)
                                              }, {
                                                  name: "institute.update.can_use_custom_pages",
-                                                 value: ($("input#can_use_custom_pages_inst_" + item.id).attr("checked") ? 1 : 0)
+                                                 value: ($("input#can_use_custom_pages_inst_" + item.id).prop("checked") ? 1 : 0)
                                              }];
                                              $.ajax({
                                                  async: false,
@@ -11326,7 +11360,7 @@
                              }
                          }
 
-                         var files = ["programa_metas", "carta_compromisso", "logo_movimento", "prestacao_de_contas", "imagem_cidade"];
+                         var files = ["programa_metas", "carta_compromisso", "logo_movimento", "prestacao_de_co", 'arq_lei', "imagem_cidade"];
 
                          var files_sent = [];
                          for (i = 0; i < files.length; i++) {
