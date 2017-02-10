@@ -5162,7 +5162,7 @@
                     }
 
                      newform.push({
-                         label: user_info.institute.metadata.ods == 1 ? "Metas ODS" : "Explicação (Ref. de Meta)",
+                         label: user_info.institute.metadata.ods == 1 ? "Meta ODS" : "Explicação (Ref. de Meta)",
                          input: ["textarea,goal_explanation,itext"]
                      });
                      newform.push({
