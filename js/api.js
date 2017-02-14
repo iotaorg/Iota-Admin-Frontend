@@ -4230,7 +4230,7 @@
                          };
 
                          $.each($arquivos, function(k, v) {
-                             formbuild.find(".models").append('<a href="/frontend/arquivos-exemplo-prefeitura/' + v + '.xls?v=2">'+k+'</a><br />' );
+                             formbuild.find(".models").append('<a href="/frontend/arquivos-exemplo-prefeitura/' + v + '.xls?v=2">' + k + '</a><br />');
                          });
 
                      }
@@ -10943,14 +10943,14 @@
                          input: ["file,carta_compromisso,itext"]
                      });
 
-                     if (user_info.institute.metadata.prestar_contas == 1 ) {
+                     if (user_info.institute.metadata.prestar_contas == 1) {
                          newform.push({
                              label: "Relatório de prestação de contas (PDF)",
                              input: ["file,prestacao_de_co,itext"]
                          });
                      }
 
-                     if (user_info.metadata.prog_meta == 1 ) {
+                     if (user_info.metadata.prog_meta == 1) {
                          newform.push({
                              label: "Arquivo da lei (PDF)",
                              input: ["file,arq_lei,itext"]
