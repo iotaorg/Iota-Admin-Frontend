@@ -4225,23 +4225,13 @@
                      }));
 
                      if ((user_info.institute) && (user_info.institute.id) && user_info.institute.id == "1") {
-                         /*var $arquivos = {
-                             'Prêmio Cidade da Criança': 'exemplo-premio-cidade-da-crianca',
-                             'Prêmio Cidades do Esporte': 'exemplo-premio-cidades-do-esporte',
-                             'Prêmio Bens Naturais Comuns': 'exemplo-premio-bens-naturais',
-                             'Prêmio Cidades Participativas': 'exemplo-premio-cidades-participativas',
-                             'Prêmio Cidade e Cultura': 'exemplo-premio-cidade-e-cultura',
-                             'Prêmio Educação para a Sustentabilidade': 'exemplo-premio-educacao-e-sus',
-                             'Prêmio Mobilidade': 'exemplo-premio-mobil',
-                             'Prêmio Cidades e Saúde': 'exemplo-premio-cidades-e-saude'
+                         var $arquivos = {
+                             '260 indicadores do Programa Cidades Sustentáveis com os ODS': '260-indicadores-novo-gps',
                          };
 
                          $.each($arquivos, function(k, v) {
-                             formbuild.find(".models").append('$$e para "'.render({
-                                 _user: $.cookie("user.id"),
-                                 e: 'Modelo de arquivo'
-                             }) + k + '": <a href="/frontend/arquivos-exemplo-premio/' + v + '.xls?v=2">XLS</a><br />' );
-                         });*/
+                             formbuild.find(".models").append('<a href="/frontend/arquivos-exemplo-prefeitura/' + v + '.xls?v=2">'+k+'</a><br />' );
+                         });
 
                      }
                      if (user_info.regions_enabled) {
