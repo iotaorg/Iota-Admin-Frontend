@@ -5,33 +5,33 @@
 <meta name="description" content="">
 <meta name="keywords" content="">
 <title>Programa Cidades Sustentáveis - Entrar</title>
-<link rel="stylesheet" href="../css/jquery.dataTables.css?v=3.48" type="text/css">
-<link rel="stylesheet" href="../css/jquery-ui-1.8.24.custom.css?v=3.48" type="text/css">
+<link rel="stylesheet" href="../css/jquery.dataTables.css?v=3.49" type="text/css">
+<link rel="stylesheet" href="../css/jquery-ui-1.8.24.custom.css?v=3.49" type="text/css">
 <link rel="stylesheet" href="../css/style.css?v=3.48" type="text/css">
 <link rel="stylesheet" href="../css/style-movimento.css?v=3.48" type="text/css">
 <link rel="stylesheet" href="../css/dialog.css?v=3.48" type="text/css">
-<link rel="stylesheet" href="../js/tinyeditor/tinyeditor.css?v=3.48">
+<link rel="stylesheet" href="../js/tinyeditor/tinyeditor.css?v=3.49">
 <script type="text/javascript" src="../js/jquery-1.6.3.min.js"></script>
-<script type="text/javascript" src="../js/jquery-ui-1.8.24.custom.min.js?v=3.48"></script>
-<script type="text/javascript" src="../js/jshashtable-2.1.js?v=3.48"></script>
-<script type="text/javascript" src="../js/jquery.numberformatter-1.2.3.min.js?v=3.48"></script>
-<script type="text/javascript" src="../js/jquery.cookie.js?v=3.48"></script>
-<script type="text/javascript" src="../js/jquery.ba-hashchange.min.js?v=3.48"></script>
-<script type="text/javascript" src="../js/jquery.dataTables.js?v=3.48"></script>
-<script type="text/javascript" src="../js/FixedColumns.js?v=3.48"></script>
+<script type="text/javascript" src="../js/jquery-ui-1.8.24.custom.min.js?v=3.49"></script>
+<script type="text/javascript" src="../js/jshashtable-2.1.js?v=3.49"></script>
+<script type="text/javascript" src="../js/jquery.numberformatter-1.2.3.min.js?v=3.49"></script>
+<script type="text/javascript" src="../js/jquery.cookie.js?v=3.49"></script>
+<script type="text/javascript" src="../js/jquery.ba-hashchange.min.js?v=3.49"></script>
+<script type="text/javascript" src="../js/jquery.dataTables.js?v=3.49"></script>
+<script type="text/javascript" src="../js/FixedColumns.js?v=3.49"></script>
 <script type="text/javascript" src="../js/jquery.dateFormat-1.0.js"></script>
 <script type="text/javascript" src="../js/jquery.qtip.min.js"></script>
-<script type="text/javascript" src="../js/tinyeditor/tiny.editor.js?v=3.48"></script>
-<script type="text/javascript" src="../js/titleBar.movimento.js?v=3.48"></script>
-<script type="text/javascript" src="../js/jstorage.min.js?v=3.48"></script>
+<script type="text/javascript" src="../js/tinyeditor/tiny.editor.js?v=3.74"></script>
+<script type="text/javascript" src="../js/titleBar.movimento.js?v=3.74"></script>
+<script type="text/javascript" src="../js/jstorage.min.js?v=3.74"></script>
+<script type="text/javascript" src="../js/kml.converter.js?v=3.74"></script>
+<script type="text/javascript" src="../js/api.common.js?v=3.74"></script>
+<script type="text/javascript" src="../js/api.js?v=3.74"></script>
 <script type="text/javascript" src="../js/jquery.jstepper.min.js"></script>
-<script type="text/javascript" src="../js/kml.converter.js?v=3.48"></script>
-<script type="text/javascript" src="../js/api.common.js?v=3.70"></script>
-<script type="text/javascript" src="../js/api.js?v=3.69"></script>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <link href='http://fonts.googleapis.com/css?family=Asap:400,700' rel='stylesheet' type='text/css' />
 </head>
-<BODY>
+<body>
 <div id="wrapper">
   <!--[if lt IE 7]>
   <div style='border: 1px solid #F7941D; background: #FEEFDA; text-align: center; clear: both; height: 75px; position: relative;'>
@@ -71,14 +71,15 @@
 	    <div class="clear"></div>
     </div>
 	<div id="content">
-		<div class="content">
+        <div class="content">
+
             <div id="header-title">
                 <div class="content">
                     <div class="title">
-                    	Entrar
+                        Entrar
                     </div>
                     <div class="description">
-						Entre com seu usuário e senha:
+                        Entre com seu usuário e senha:
                     </div>
                 </div>
             </div>
@@ -86,7 +87,7 @@
             <div id="dashboard">
                 <div id="aviso"></div>
                 <div id="form-login">
-                	<div class="content">
+                    <div class="content">
                     <form method="post">
                         <input type="text" name="usuario" id="usuario" class="ilogin" placeholder="Usuário"><br />
                         <input type="password" name="senha" id="senha" class="ilogin" placeholder="Senha"><br />
@@ -130,14 +131,26 @@
 	<div id="footer">
     	<div class="content">
         	<div class="left">
-            	Programa Cidades Sustentáveis 2012
+
+
+                <script>
+                     if (window.location.href.indexOf("atletaspelobrasil.org.br") > 0){
+                         document.write('Atletas pelo brasil')
+                     }else if (window.location.href.indexOf("172.17.0.2") > 0 || window.location.href.indexOf("teste.cidadessustentaveis.org.br") > 0){
+                         document.write('Observatório da primeira infância')
+                     }else{
+                         document.write('Programa Cidades Sustentáveis')
+                     }
+                </script>
+                2017
+
             </div>
         	<div class="right">
             	<div class="text">
                 <p xmlns:dct="http://purl.org/dc/terms/" xmlns:vcard="http://www.w3.org/2001/vcard-rdf/3.0#">
                   To the extent possible under law,
                   <a rel="dct:publisher"
-                     href="http://www.cidadessustentaveis.org.br">http://www.cidadessustentaveis.org.br</a>
+                     href="/">http://<script>document.write(window.location.host);</script></a>
                   has waived all copyright and related or neighboring rights to
                   this work.
                 This work is published from:
