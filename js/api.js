@@ -9884,18 +9884,7 @@
                              lang: cur_lang,
                              key: $.cookie("key")
                          }),
-                         "aoColumnDefs": [/*{
-                             "sClass": "center",
-                             "aTargets": [1]
-                         }, {
-                             "fnRender": function(oObj, sVal) {
-                                 sVal = "<a href='$$url' target='_blank' title='$$url'>Clique para fazer download</a>".render2({
-                                     url: sVal
-                                 });
-                                 return sVal;
-                             },
-                             "aTargets": [1]
-                         },*/ {
+                         "aoColumnDefs": [{
                              "fnRender": function(oObj, sVal) {
                                  return $.format.date(sVal, "dd/MM/yyyy hh:mm");
                              },
