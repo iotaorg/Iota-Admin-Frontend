@@ -382,7 +382,8 @@
 
          submenu_label["customize"] = [];
          submenu_label["customize"].push({
-             "menus": "Menus"
+            "menus": "Menus",
+            "files_upload": "Arquivos de valores enviados"
          });
          submenu_label["customize"].push({
              "pages": "Páginas"
@@ -421,10 +422,10 @@
          });
 
          menu_access["superadmin"] = ["dashboard", "prefs", "parameters", "networks", "admins", "users", "indicator", "axis", "logs", "logout"];
-         submenu_access["superadmin"] = ["countries", "states", "cities", "units"];
+         submenu_access["superadmin"] = ["countries", "states", "cities", "files_upload", "units"];
 
          menu_access["admin"] = ["dashboard", "prefs", "users", "parameters", "variable_user", "axis", "indicator", "customize", "logs"];
-         submenu_access["admin"] = ["countries", "states", "cities", "units", "css"];
+         submenu_access["admin"] = ["countries", "states", "cities", "files_upload" , "units", "css"];
 
 
          menu_access["admin"].push("logout");
@@ -9867,21 +9868,23 @@
                  if ($.getUrlVar("option") == "list" || $.getUrlVar("option") == undefined) {
 
                      var userList = buildDataTable({
-                         headers: ["Status", "Arquivo", "Data do envio"]
+                         headers: ["Status",  "Data do envio"]
                      });
 
+
                      $("#dashboard-content .content").append(userList);
+                     $('#button-add').remove();
 
                      $("#results").dataTable({
                          iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
                          "bProcessing": true,
-                         "sAjaxSource": api_path + '/api/file?api_key=$$key&hide_listing=0&content-type=application/json&lang=$$lang&columns=status_text,public_path,created_at'.render2({
+                         "sAjaxSource": api_path + '/api/file?api_key=$$key&hide_listing=0&content-type=application/json&lang=$$lang&columns=status_text,created_at'.render2({
                              user: $.cookie("user.id"),
                              lang: cur_lang,
                              key: $.cookie("key")
                          }),
-                         "aoColumnDefs": [{
+                         "aoColumnDefs": [/*{
                              "sClass": "center",
                              "aTargets": [1]
                          }, {
@@ -9892,11 +9895,11 @@
                                  return sVal;
                              },
                              "aTargets": [1]
-                         }, {
+                         },*/ {
                              "fnRender": function(oObj, sVal) {
                                  return $.format.date(sVal, "dd/MM/yyyy hh:mm");
                              },
-                             "aTargets": [2]
+                             "aTargets": [1]
                          }]
                      });
 
