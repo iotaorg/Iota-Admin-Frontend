@@ -57,9 +57,13 @@
                     <script>
                      if (window.location.href.indexOf("atletaspelobrasil.org.br") > 0){
                          document.write('<img src="/static/images/logo-cidades-do-esporte.jpeg" alt="Cidades do Esporte" border="0"/>');
+                     }else if (window.location.href.indexOf("www.redesocialdecidades.org.br") > 0){
+                         document.write('<div class="logo"><img src="../images/logo-movimento.png" border="0" alt="Programa Cidades Sustentáveis" /></div>');
                      }else if (window.location.href.indexOf("172.17.0.2") > 0 || window.location.href.indexOf("teste.cidadessustentaveis.org.br") > 0){
                          document.write('<img height="99" width="59" src="/static/infancia/logo.svg" class="pad10">');
                          document.getElementsByTagName("BODY")[0].setAttribute("class", "infancia");
+
+
                      }else{
                          document.write('<img src="../images/logo.png" border="0" alt="Programa Cidades Sustentáveis" />')
                      }
