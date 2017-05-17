@@ -5,9 +5,9 @@ Frontend do administrador do Iota.
 
 Para usar com docker (não precisa do nginx instalado na maquina):
 
-$ git clone ...; cd <repository>
-$ docker build -t iota/frontend-nginx docker/
-$ ./docker/run-container.sh
+    $ git clone ...; cd <repository>
+    $ docker build -t iota/frontend-nginx docker/
+    $ ./docker/run-container.sh
 
 Para usar com nginx:
 
