@@ -56,16 +56,34 @@
 
                     <script>
                      if (window.location.href.indexOf("atletaspelobrasil.org.br") > 0){
+
                          document.write('<img src="/static/images/logo-cidades-do-esporte.jpeg" alt="Cidades do Esporte" border="0"/>');
-                     }else if (window.location.href.indexOf("www.redesocialdecidades.org.br") > 0){
+
+                     }else if ( window.location.href.indexOf("172.17.0.2") > 0 || window.location.href.indexOf("www.redesocialdecidades.org.br") > 0){
+
+                        var s = document.createElement("script");
+                        s.type = "text/javascript";
+                        s.src = "../js/titleBar.movimento.js";
+                        $("head").append(s);
+
+                         document.write('<link rel="stylesheet" href="../css/style-movimento.css?v=3.48" type="text/css">');
+
                          document.write('<div class="logo"><img src="../images/logo-movimento.png" border="0" alt="Programa Cidades Sustentáveis" /></div>');
-                     }else if (window.location.href.indexOf("172.17.0.2") > 0 || window.location.href.indexOf("teste.cidadessustentaveis.org.br") > 0){
+
+                     }else if ( window.location.href.indexOf("teste.cidadessustentaveis.org.br") > 0){
+
                          document.write('<img height="99" width="59" src="/static/infancia/logo.svg" class="pad10">');
                          document.getElementsByTagName("BODY")[0].setAttribute("class", "infancia");
 
 
                      }else{
-                         document.write('<img src="../images/logo.png" border="0" alt="Programa Cidades Sustentáveis" />')
+                        var s = document.createElement("script");
+                        s.type = "text/javascript";
+                        s.src = "../js/titleBar.prefeitura.js";
+                        $("head").append(s);
+
+                        document.write('<img src="../images/logo.png" border="0" alt="Programa Cidades Sustentáveis" />');
+
                      }
                     </script>
                     </a>
