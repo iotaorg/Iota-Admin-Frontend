@@ -1,4 +1,5 @@
  var _is_updating_lexicon = 0;
+ var SUPER_CACHE_data_region, SUPER_CACHE_data_variables;
  $(document).ready(function() {
 
      if (do_not_use_lex == false) {
@@ -1132,6 +1133,7 @@
                                              });
 
                                              $("#results").dataTable({
+                                                 iDisplayLength: 50,
                                                  "oLanguage": get_datatable_lang(),
                                                  "aoColumnDefs": [{
                                                      "bSearchable": false,
@@ -1359,10 +1361,10 @@
                                                  var ajax_url = api_path + "/api/city/$$city/region/$$region/value/$$id".render2({
                                                      city: getIdFromUrl(user_info.city),
                                                      region: $("#dashboard-content .content").find("#region_id option:selected").val(),
-                                                     id: $("table.history tbody tr.selected").attr("value-id")
+                                                     id: $("table.history tbody tr.selected").attr("data-value-id")
                                                  });
                                              } else {
-                                                 var ajax_url = $.getUrlVar("url") + "/value/" + $("table.history tbody tr.selected").attr("value-id");
+                                                 var ajax_url = $.getUrlVar("url") + "/value/" + $("table.history tbody tr.selected").attr("data-value-id");
                                              }
                                          }
 
@@ -1500,6 +1502,7 @@
                      });
 
                      $("#results").dataTable({
+                         iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
                          "bProcessing": true,
                          "sAjaxSource": api_path + '/api/user?role=admin&api_key=$$key&content-type=application/json&lang=$$lang&columns=name,email,url,_,_'.render2({
@@ -1769,6 +1772,7 @@
                      });
 
                      $("#results").dataTable({
+                         iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
                          "bProcessing": true,
                          "sAjaxSource": api_path + '/api/user?role=user$$network_id&api_key=$$key&content-type=application/json&lang=$$lang&columns=name,email,url,_,_'.render2({
@@ -2071,6 +2075,7 @@
                      });
 
                      $("#results").dataTable({
+                         iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
                          "bProcessing": true,
                          "sAjaxSource": api_path + '/api/city?api_key=$$key&content-type=application/json&lang=$$lang&columns=name,uf,url,_,_'.render2({
@@ -2349,6 +2354,7 @@
                      });
 
                      $("#results").dataTable({
+                         iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
                          "bProcessing": true,
                          "sAjaxSource": api_path + '/api/state?api_key=$$key&content-type=application/json&lang=$$lang&columns=name,uf,country_id,url,_,_'.render2({
@@ -2549,6 +2555,7 @@
                      });
 
                      $("#results").dataTable({
+                         iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
                          "bProcessing": true,
                          "sAjaxSource": api_path + '/api/country?api_key=$$key&content-type=application/json&lang=$$lang&columns=name,name_url,url,_,_'.render2({
@@ -2689,7 +2696,7 @@
                  if ($.getUrlVar("option") == "list" || $.getUrlVar("option") == undefined) {
 
                      var userList = buildDataTable({
-                         headers: ["Nome", "Url", "_"]
+                         headers: ["Nome", "Sobre", "_"]
                      });
 
                      $("#dashboard-content .content").append(userList);
@@ -2700,9 +2707,10 @@
                      });
 
                      $("#results").dataTable({
+                         iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
                          "bProcessing": true,
-                         "sAjaxSource": api_path + '/api/network?api_key=$$key&content-type=application/json&lang=$$lang&columns=name,name_url,url,_,_'.render2({
+                         "sAjaxSource": api_path + '/api/network?api_key=$$key&content-type=application/json&lang=$$lang&columns=name,description,url,_,_'.render2({
                              lang: cur_lang,
                              key: $.cookie("key")
                          }),
@@ -2917,6 +2925,7 @@
                      });
 
                      $("#results").dataTable({
+                         iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
                          "bProcessing": true,
                          "sAjaxSource": api_path + '/api/measurement_unit?api_key=$$key&content-type=application/json&lang=$$lang&columns=name,short_name,url,_,_'.render2({
@@ -3114,6 +3123,7 @@
                      loadVariableConfig();
 
                      $("#results").dataTable({
+                         iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
                          "bProcessing": true,
                          "sAjaxSource": api_path + '/api/variable?use=edit&api_key=$$key&content-type=application/json&lang=$$lang&columns=name,cognomen,type,created_at,is_basic,url,url,_,_'.render2({
@@ -3647,6 +3657,7 @@
                                          });
 
                                          var oTable = $("#results").dataTable({
+                                             iDisplayLength: 50,
                                              "oLanguage": get_datatable_lang(),
                                              "aoColumnDefs": [{
                                                  "bSearchable": false,
@@ -3971,10 +3982,10 @@
                                              var ajax_url = api_path + "/api/city/$$city/region/$$region/value/$$id".render2({
                                                  city: getIdFromUrl(user_info.city),
                                                  region: $("#dashboard-content .content").find("#region_id option:selected").val(),
-                                                 id: $("table.history tbody tr.selected").attr("value-id")
+                                                 id: $("table.history tbody tr.selected").attr("data-value-id")
                                              });
                                          } else {
-                                             var ajax_url = $.getUrlVar("url") + "/value/" + $("table.history tbody tr.selected").attr("value-id");
+                                             var ajax_url = $.getUrlVar("url") + "/value/" + $("table.history tbody tr.selected").attr("data-value-id");
                                          }
                                      }
 
@@ -4109,6 +4120,8 @@
                          $("#dashboard-content .content #user-id").append($("<option value=''>$$se...</option>".render({
                              se: 'Selecione'
                          })));
+
+
                          $.ajax({
                              type: 'GET',
                              dataType: 'json',
@@ -4201,7 +4214,7 @@
                      });
 
                      var now = new Date();
-                     now.setDate(now.getDate() - (10 * 365));
+                     now.setDate(now.getDate() - (20 * 365));
                      $("#dashboard-content .content .variable-filter input#data_ini").datepicker("setDate", now);
                      $("#dashboard-content .content .variable-filter input#data_fim").datepicker("setDate", new Date());
 
@@ -4368,7 +4381,7 @@
                                              var data_formatada;
                                              if (item.period == "yearly") {
                                                  data_formatada = $.format.date(valor.value_of_date, "yyyy");
-                                             } else if (item.period == "daily") {
+                                             } else {
                                                  data_formatada = $.convertDate(valor.value_of_date, " ");
                                              }
 
@@ -4384,6 +4397,7 @@
                                  });
 
                                  $("#results").dataTable({
+                                     iDisplayLength: 50,
                                      "oLanguage": get_datatable_lang(),
                                      "aoColumnDefs": [{
                                          "bSearchable": false,
@@ -4705,6 +4719,7 @@
                                  });
 
                                  oTable = $("#results").dataTable({
+                                     iDisplayLength: 50,
                                      "oLanguage": get_datatable_lang(),
                                      "aoColumnDefs": [{
                                          "bSortable": false,
@@ -4866,6 +4881,7 @@
                      });
 
                      $("#results").dataTable({
+                         iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
                          "bProcessing": true,
                          "sAjaxSource": api_path + '/api/axis?api_key=$$key&content-type=application/json&lang=$$lang&columns=name,url,_,_'.render2({
@@ -5059,6 +5075,7 @@
                      });
 
                      $("#results").dataTable({
+                         iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
                          "bProcessing": true,
                          "sAjaxSource": api_path + '/api/indicator?use=edit&api_key=$$key&content-type=application/json&lang=$$lang&columns=name,formula,created_at,url,_,_'.render2({
@@ -5902,7 +5919,7 @@
                      });
 
                      if (user_info.institute && user_info.institute.fixed_indicator_axis_id && user_info.user_type == 'user') {
-                         $("#axis_id option[value=" + user_info.institute.fixed_indicator_axis_id + "]").attr('selected', true);
+                         $("#axis_id option[value=" + user_info.institute.fixed_indicator_axis_id + "]").prop('selected', true);
                          $("#axis_id").attr('disabled', 'disabled');
                          $("#axis_id").attr('title', '$$x'.render({
                              x: 'Desabilitado'
@@ -5911,6 +5928,9 @@
 
                      if ($.getUrlVar("option") == "add") {
                          $("#dashboard-content .content .botao-form[ref='enviar']").click(function() {
+                             if ($("#source").val() == '_new') {
+                                 $("#add-source").click();
+                             }
                              resetWarnings();
                              if ($(this).parent().parent().find("#name").val() == "") {
                                  $(".form-aviso").setWarning({
@@ -6348,6 +6368,9 @@
                          });
 
                          $("#dashboard-content .content .botao-form[ref='enviar']").click(function() {
+                             if ($("#source").val() == '_new') {
+                                 $("#add-source").click();
+                             }
                              resetWarnings();
                              if ($(this).parent().parent().find("#name").val() == "") {
                                  $(".form-aviso").setWarning({
@@ -6698,6 +6721,7 @@
 
 
                      $("#results").dataTable({
+                         iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
                          "bProcessing": true,
                          "sAjaxSource": api_path + '/api/network?api_key=$$key&topic=1&content-type=application/json&user_id=$$user_id&lang=$$lang&columns=name,name_url,url,_,_'.render2({
@@ -7541,8 +7565,8 @@
                              });
 
 
-                             var data_region;
-                             if (user_info.regions_enabled) {
+                             var data_region = SUPER_CACHE_data_region;
+                             if (user_info.regions_enabled && !data_region) {
                                  $.ajax({
                                      async: false,
                                      type: 'GET',
@@ -7553,6 +7577,7 @@
                                      }),
                                      success: function(data, textStatus, jqXHR) {
                                          data_region = data.regions;
+                                         SUPER_CACHE_data_region = data_region;
                                      }
                                  });
                              }
@@ -7660,25 +7685,29 @@
                                  });
 
                              }
-                             var data_variables = [];
-                             $.ajax({
-                                 async: false,
-                                 cache: true,
-                                 type: 'GET',
-                                 dataType: 'json',
-                                 url: api_path + '/api/variable?api_key=$$key'.render2({
-                                     key: $.cookie("key"),
-                                     userid: $.cookie("user.id")
-                                 }),
-                                 success: function(data, textStatus, jqXHR) {
-                                     $.each(data.variables, function(index, value) {
-                                         data_variables.push({
-                                             "id": data.variables[index].id,
-                                             "name": data.variables[index].name
+                             var data_variables = SUPER_CACHE_data_variables;
+                             if (!data_variables) {
+                                 data_variables = [];
+                                 $.ajax({
+                                     async: false,
+                                     cache: true,
+                                     type: 'GET',
+                                     dataType: 'json',
+                                     url: api_path + '/api/variable?api_key=$$key'.render2({
+                                         key: $.cookie("key"),
+                                         userid: $.cookie("user.id")
+                                     }),
+                                     success: function(data, textStatus, jqXHR) {
+                                         $.each(data.variables, function(index, value) {
+                                             data_variables.push({
+                                                 "id": data.variables[index].id,
+                                                 "name": data.variables[index].name
+                                             });
                                          });
-                                     });
-                                 }
-                             });
+                                         SUPER_CACHE_data_variables = data_variables;
+                                     }
+                                 });
+                             }
                              var data_vvariables = [];
                              $.ajax({
                                  async: false,
@@ -7797,7 +7826,13 @@
                              }
 
                              $("#dashboard-content .content .filter_indicator #date_filter").change(function() {
-                                 $("#dashboard-content .content .filter_result").empty();
+                                 if (!$("#dashboard-content .content .filter_result").is(':empty')) {
+                                     if (window.confirm('Ao alterar o ano, você irá perder os dados preenchidos abaixo. Deseja continuar?')) {
+                                         $('.filter_result a[ref="cancelar"]').click();
+                                     }
+                                 } else {
+                                     $('.filter_result a[ref="cancelar"]').click();
+                                 }
                              });
 
                              $("#dashboard-content .content .filter_indicator .botao-form[ref='enviar']").click(function() {
@@ -8614,6 +8649,7 @@
                      });
 
                      $("#results").dataTable({
+                         iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
                          "bProcessing": true,
                          "sAjaxSource": api_path + '/api/user_indicator_axis?api_key=$$key&content-type=application/json&lang=$$lang&columns=name,url,_,_'.render2({
@@ -9068,6 +9104,7 @@
                      });
 
                      $("#results").dataTable({
+                         iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
                          "bProcessing": true,
                          "sAjaxSource": api_path + '/api/menu?api_key=$$key&content-type=application/json&lang=$$lang&columns=title,menu_id,position,url,_,_'.render2({
@@ -9310,6 +9347,7 @@
                      });
 
                      $("#results").dataTable({
+                         iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
                          "bProcessing": true,
                          "sAjaxSource": api_path + '/api/page?api_key=$$key&content-type=application/json&lang=$$lang&columns=title,title_url,url,_,_'.render2({
@@ -9510,6 +9548,7 @@
                      });
 
                      $("#results").dataTable({
+                         iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
                          "bProcessing": true,
                          "sAjaxSource": api_path + '/api/best_pratice?api_key=$$key&content-type=application/json&lang=$$lang&columns=name,name_url,url,_,_'.render2({
@@ -9823,6 +9862,45 @@
                          })
                      });
                  }
+             } else if (getUrlSub() == "files_upload") {
+                 /*  Arquivos  */
+                 if ($.getUrlVar("option") == "list" || $.getUrlVar("option") == undefined) {
+
+                     var userList = buildDataTable({
+                         headers: ["Status", "Arquivo", "Data do envio"]
+                     });
+
+                     $("#dashboard-content .content").append(userList);
+
+                     $("#results").dataTable({
+                         iDisplayLength: 50,
+                         "oLanguage": get_datatable_lang(),
+                         "bProcessing": true,
+                         "sAjaxSource": api_path + '/api/file?api_key=$$key&hide_listing=0&content-type=application/json&lang=$$lang&columns=status_text,public_path,created_at'.render2({
+                             user: $.cookie("user.id"),
+                             lang: cur_lang,
+                             key: $.cookie("key")
+                         }),
+                         "aoColumnDefs": [{
+                             "sClass": "center",
+                             "aTargets": [1]
+                         }, {
+                             "fnRender": function(oObj, sVal) {
+                                 sVal = "<a href='$$url' target='_blank' title='$$url'>Clique para fazer download</a>".render2({
+                                     url: sVal
+                                 });
+                                 return sVal;
+                             },
+                             "aTargets": [1]
+                         }, {
+                             "fnRender": function(oObj, sVal) {
+                                 return $.format.date(sVal, "dd/MM/yyyy hh:mm");
+                             },
+                             "aTargets": [2]
+                         }]
+                     });
+
+                 }
              } else if (getUrlSub() == "files") {
                  /*  Arquivos  */
                  if ($.getUrlVar("option") == "list" || $.getUrlVar("option") == undefined) {
@@ -9839,6 +9917,7 @@
                      });
 
                      $("#results").dataTable({
+                         iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
                          "bProcessing": true,
                          "sAjaxSource": api_path + '/api/user/$$user/file?api_key=$$key&hide_listing=0&content-type=application/json&lang=$$lang&columns=public_name,public_url,id'.render2({
@@ -9915,6 +9994,7 @@
                          }),
                          success: function(data, status, jqXHR) {
                              var classes = [];
+                             data.files = data.files ? data.files : [];
                              data.files.sort(function(a, b) {
                                  a = a.class_name,
                                      b = b.class_name;
@@ -10219,6 +10299,7 @@
                      });
 
                      $("#results").dataTable({
+                         iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
                          "aaData": results,
                          "bSort": false,
@@ -11393,6 +11474,7 @@
                  lang: cur_lang,
 
                      $("#results").dataTable({
+                         iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
                          "bProcessing": true,
                          "sAjaxSource": url_log,
