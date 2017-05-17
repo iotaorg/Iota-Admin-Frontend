@@ -4,7 +4,7 @@
 }
 body{
     margin: 0 auto;
-    padding: 0;
+    padding: 0 !important;
 }
 body, td, div{
     font-size: 11pt;
@@ -63,7 +63,6 @@ a{
 
 #top .content{
     margin: auto;
-    padding-top: 10px;
     text-align: left;
     width: 1000px;
 }
@@ -140,7 +139,6 @@ a{
     background-color: #20c1c1;
     clear: both;
 }
-
 #menu .content{
     margin: 0 auto;
     text-align: left;
@@ -1807,6 +1805,62 @@ input.admin_checked{
 #steps-buttons{
 	margin-top: 20px;
 }
+div.description:empty {display: none}
 input.add_new{
-	display: none;
+    display: none;
+}
+#header-title .content {
+    padding-bottom: 0
+}
+body.infancia #menu,
+body.infancia #menu ul.submenu {
+    background-color: #3366cc;
+}
+body.infancia #menu ul li a{
+    color: white;
+}
+body.infancia #menu ul li a:hover{
+    color: #3acbff;
+}
+body.infancia #menu ul li {
+    border-bottom: none;
+    margin-bottom: 3px;
+}
+body.infancia #header-title .title {
+    color: #36c;
+}
+body.infancia table.dataTable thead th {
+    background-color: #36c
+}
+body.infancia table.dataTable, body.infancia .form {
+    border-bottom-color: #36c;
+    border-color: #36c;
+}
+body.infancia .form .title {
+    background-color: #36c;
+}
+body.infancia input.botao-form, body.infancia a.botao-form {
+    background: none;
+    background-color: #36c;
+}
+body.infancia a.button-add {
+    color: #36c;
+}
+body.infancia a.button-add,
+body.infancia a.button-add:hover {
+    border-color: #36c
+}
+body.infancia a#delete-source, body.infancia a#add-source, body.infancia a#add-unit, body.infancia a#delete-unit {
+    border-color: #36c;
+    color: #36c;
+}
+body.infancia #dialog-box #dialog-title,
+body.infancia .variable-filter .botao input {
+    background: none;
+    background-color: #36c;
+    color: white;
+}
+body.infancia .models a {
+    color: #36c;
+    border-color: #36c;
 }

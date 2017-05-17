@@ -5,25 +5,25 @@
 <meta name="description" content="">
 <meta name="keywords" content="">
 <title>Programa Cidades Sustentáveis - Entrar</title>
-<link rel="stylesheet" href="../css/jquery.dataTables.css?v=3.46" type="text/css">
-<link rel="stylesheet" href="../css/jquery-ui-1.8.24.custom.css?v=3.46" type="text/css">
-<link rel="stylesheet" href="../css/style.css?v=3.46" type="text/css">
-<link rel="stylesheet" href="../css/dialog.css?v=3.46" type="text/css">
-<link rel="stylesheet" href="../js/tinyeditor/tinyeditor.css?v=3.46">
+<link rel="stylesheet" href="../css/jquery.dataTables.css?v=3.49" type="text/css">
+<link rel="stylesheet" href="../css/jquery-ui-1.8.24.custom.css?v=3.49" type="text/css">
+<link rel="stylesheet" href="../css/style.css?v=3.49" type="text/css">
+<link rel="stylesheet" href="../css/dialog.css?v=3.49" type="text/css">
+<link rel="stylesheet" href="../js/tinyeditor/tinyeditor.css?v=3.49">
 <script type="text/javascript" src="../js/jquery-1.6.3.min.js"></script>
-<script type="text/javascript" src="../js/jquery-ui-1.8.24.custom.min.js?v=3.48"></script>
-<script type="text/javascript" src="../js/jshashtable-2.1.js?v=3.48"></script>
-<script type="text/javascript" src="../js/jquery.numberformatter-1.2.3.min.js?v=3.48"></script>
-<script type="text/javascript" src="../js/jquery.cookie.js?v=3.48"></script>
-<script type="text/javascript" src="../js/jquery.ba-hashchange.min.js?v=3.48"></script>
-<script type="text/javascript" src="../js/jquery.dataTables.js?v=3.48"></script>
-<script type="text/javascript" src="../js/FixedColumns.js?v=3.48"></script>
+<script type="text/javascript" src="../js/jquery-ui-1.8.24.custom.min.js?v=3.49"></script>
+<script type="text/javascript" src="../js/jshashtable-2.1.js?v=3.49"></script>
+<script type="text/javascript" src="../js/jquery.numberformatter-1.2.3.min.js?v=3.49"></script>
+<script type="text/javascript" src="../js/jquery.cookie.js?v=3.49"></script>
+<script type="text/javascript" src="../js/jquery.ba-hashchange.min.js?v=3.49"></script>
+<script type="text/javascript" src="../js/jquery.dataTables.js?v=3.49"></script>
+<script type="text/javascript" src="../js/FixedColumns.js?v=3.49"></script>
 <script type="text/javascript" src="../js/jquery.dateFormat-1.0.js"></script>
 <script type="text/javascript" src="../js/jquery.qtip.min.js"></script>
-<script type="text/javascript" src="../js/tinyeditor/tiny.editor.js?v=3.48"></script>
-<script type="text/javascript" src="../js/titleBar.admin.js?v=3.48"></script>
-<script type="text/javascript" src="../js/jstorage.min.js?v=3.48"></script>
-<script type="text/javascript" src="../js/kml.converter.js?v=3.48"></script>
+<script type="text/javascript" src="../js/tinyeditor/tiny.editor.js?v=3.49"></script>
+<script type="text/javascript" src="../js/titleBar.admin.js?v=3.49"></script>
+<script type="text/javascript" src="../js/jstorage.min.js?v=3.49"></script>
+<script type="text/javascript" src="../js/kml.converter.js?v=3.49"></script>
 <script type="text/javascript" src="../js/jquery.jstepper.min.js"></script>
 <script type="text/javascript" src="../js/api.common.js?v=3.50"></script>
 <script type="text/javascript" src="../js/api.js?v=3.51"></script>
@@ -54,10 +54,12 @@
         	<div class="top-left">
 	        	<div class="logo"><a href="#">
 
-                    <!-- nao me bata, estou fazendo isso por motivos maiores! -->
                     <script>
-                    if (window.location.href.indexOf("atletaspelobrasil.org.br")){
+                     if (window.location.href.indexOf("atletaspelobrasil.org.br") > 0){
                          document.write('<img src="/static/images/logo-cidades-do-esporte.jpeg" alt="Cidades do Esporte" border="0"/>');
+                     }else if (window.location.href.indexOf("172.17.0.2") > 0 || window.location.href.indexOf("teste.cidadessustentaveis.org.br") > 0){
+                         document.write('<img height="99" width="59" src="/static/infancia/logo.svg" class="pad10">');
+                         document.getElementsByTagName("BODY")[0].setAttribute("class", "infancia");
                      }else{
                          document.write('<img src="../images/logo.png" border="0" alt="Programa Cidades Sustentáveis" />')
                      }
@@ -140,14 +142,26 @@
 	<div id="footer">
     	<div class="content">
         	<div class="left">
-            	Programa Cidades Sustentáveis 2012
+
+
+                <script>
+                     if (window.location.href.indexOf("atletaspelobrasil.org.br") > 0){
+                         document.write('Atletas pelo brasil')
+                     }else if (window.location.href.indexOf("172.17.0.2") > 0 || window.location.href.indexOf("teste.cidadessustentaveis.org.br") > 0){
+                         document.write('Observatório da primeira infância')
+                     }else{
+                         document.write('Programa Cidades Sustentáveis')
+                     }
+                </script>
+                2017
+
             </div>
         	<div class="right">
             	<div class="text">
                 <p xmlns:dct="http://purl.org/dc/terms/" xmlns:vcard="http://www.w3.org/2001/vcard-rdf/3.0#">
                   To the extent possible under law,
                   <a rel="dct:publisher"
-                     href="http://www.cidadessustentaveis.org.br">http://www.cidadessustentaveis.org.br</a>
+                     href="/">http://<script>document.write(window.location.host);</script></a>
                   has waived all copyright and related or neighboring rights to
                   this work.
                 This work is published from:
@@ -167,11 +181,6 @@
         </div>
     </div>
     <div class="clear"></div>
-	<div id="aware">
-    	<div class="content">
-        	Desenvolvido por <a href="http://www.aware.com.br" target="_blank" alt="Aware">Aware <img src="../images/icone_aware.gif" border="0" /></a>
-        </div>
-    </div>
 </div>
 </BODY>
 </html>
