@@ -4,7 +4,7 @@
 }
 body{
     margin: 0 auto;
-    padding: 0;
+    padding: 0 !important;
 }
 body, td, div{
     font-size: 11pt;
