@@ -425,7 +425,7 @@
          submenu_access["superadmin"] = ["countries", "states", "cities", "files_upload", "units"];
 
          menu_access["admin"] = ["dashboard", "prefs", "users", "parameters","content", "variable_user", "axis", "indicator", "customize", "logs"];
-         submenu_access["admin"] = ["countries", "states", "cities", "files_upload" ,"best_pratice", "units", "css"];
+         submenu_access["admin"] = ["countries", "states", "cities", "files_upload", "files" ,"best_pratice", "units", "css"];
 
 
          menu_access["admin"].push("logout");
