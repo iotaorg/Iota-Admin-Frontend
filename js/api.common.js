@@ -2070,7 +2070,7 @@ var buildLogin = function() {
     $("#dashboard #form-login").show();
 }
 
-var formataFormula = function(formula, variables, vvariables) {
+function formataFormula(formula, variables, vvariables) {
     var operators_caption = {
         "+": "+",
         "-": "-",
@@ -2081,34 +2081,40 @@ var formataFormula = function(formula, variables, vvariables) {
         "CONCATENAR": ""
     };
 
-    var new_formula = formula;
+    var new_formula = formula, is_string = /CONCATENAR/i.test(formula);
 
-    variables.sort(function(a, b) {
+
+    variables.sort(function (a, b) {
         return b.id - a.id;
     });
 
-    $.each(variables, function(index, value) {
-        var pattern = "\\$" + variables[index].id;
-        var re = new RegExp(pattern, "g");
-        new_formula = new_formula.replace(re, variables[index].name + " ");
-    });
-
-    if (vvariables) {
-        vvariables.sort(function(a, b) {
-            return b.id - a.id;
-        });
-        $.each(vvariables, function(index, value) {
-            var pattern = "\\#" + vvariables[index].id;
-            var re = new RegExp(pattern, "g");
-            new_formula = new_formula.replace(re, vvariables[index].name);
-        });
-    }
-
-    $.each(operators_caption, function(index, value) {
+    $.each(operators_caption, function (index, value) {
         new_formula = new_formula.replace(index, " " + value + " ");
     });
 
-    return new_formula.trim();
+    $.each(variables, function (index, value) {
+        var pattern = "\\$" + variables[index].id;
+        var re = new RegExp(pattern, "g");
+        new_formula = new_formula.replace(re, variables[index].name + ( is_string? "\n" : " "));
+    });
+
+    if (vvariables) {
+        vvariables.sort(function (a, b) {
+            return b.id - a.id;
+        });
+        $.each(vvariables, function (index, value) {
+            var pattern = "\\#" + vvariables[index].id;
+            var re = new RegExp(pattern, "g");
+            new_formula = new_formula.replace(re, vvariables[index].name + ( is_string? "\n" : " "));
+        });
+    }
+
+    new_formula = $.trim(new_formula);
+    console.log(is_string,  new_formula);
+    new_formula.replace(/ +/g, ' ');
+    new_formula.replace(/ /g, '&nbsp;');
+
+    return new_formula;
 }
 
 var getVariablesFromFormula = function(formula) {
