@@ -349,7 +349,7 @@
          menu_label["dashboard"] = "Início";
          menu_label["admins"] = "Administradores";
          menu_label["users"] = "Usuários";
-         menu_label["customize"] = "Customização";
+         menu_label["other"] = "Outros";
          menu_label["content"] = "Conteúdo";
          menu_label["axis"] = "Eixos";
          menu_label["indicator"] = "Indicadores";
@@ -379,22 +379,19 @@
          submenu_label["parameters"].push({
              "units": "Unidades de Medida"
          });
-         submenu_label["parameters"].push({
-             "axis1": "Eixo auxiliar 1"
-         });
-         submenu_label["parameters"].push({
-             "axis2": "Eixo auxiliar 2"
-         });
 
-         submenu_label["customize"] = [];
-         submenu_label["customize"].push({
+         submenu_label["parameters"].push({
+             "axis": "Eixos"
+         });
+         submenu_label["other"] = [];
+         submenu_label["other"].push({
              "menus": "Menus",
              "files_upload": "Arquivos de valores enviados"
          });
-         submenu_label["customize"].push({
+         submenu_label["other"].push({
              "pages": "Páginas"
          });
-         submenu_label["customize"].push({
+         submenu_label["other"].push({
              "css": "CSS"
          });
 
@@ -427,17 +424,36 @@
              "region-map": "Definir Regiões no Mapa"
          });
 
-         menu_access["superadmin"] = ["dashboard", "prefs", "parameters", "networks", "admins", "users", "indicator", "axis", "logs", "logout"];
+         menu_access["superadmin"] = ["dashboard", "prefs", "parameters", "networks", "admins", "users", "indicator", "logs", "logout"];
          submenu_access["superadmin"] = ["countries", "states", "cities", "files_upload", "units", "axis1", "axis2"];
 
-         menu_access["admin"] = ["dashboard", "prefs", "users", "parameters", "content", "variable_user", "axis", "indicator", "customize", "logs"];
-         submenu_access["admin"] = ["countries", "states", "cities", "files_upload", "files", "best_pratice", "units", "axis1", "axis2", "css"];
+         menu_access["admin"] = ["dashboard", "prefs", "users", "parameters", "content", "variable_user",  "indicator", "other", "logs"];
+         submenu_access["admin"] = ["countries", "states", "cities", "files_upload", "files", "best_pratice", "units", "axis", "axis1", "axis2", "css"];
 
 
          menu_access["admin"].push("logout");
          submenu_access["user"] = ["dashboard"];
 
+            if (user_info.institute && user_info.institute.metadata){
+
+                if (user_info.institute.metadata.axis_aux1){
+                    submenu_label["parameters"].push({
+                         "axis1": user_info.institute.metadata.axis_aux1
+                     });
+                }
+
+                if (user_info.institute.metadata.axis_aux2){
+                    submenu_label["parameters"].push({
+                         "axis2": user_info.institute.metadata.axis_aux2
+                     });
+                }
+
+            }
+
+
          if (findInArray(user_info.roles, "user")) {
+
+
              if ((user_info.institute) && (user_info.institute.id) && user_info.institute.id == "1") {
                  menu_access["user"] = ["prefs"];
              } else {
@@ -447,15 +463,15 @@
 
                  if (user_info.institute.id != 3) {
                      if (user_info.institute.can_use_custom_pages == 1) {
-                         if (!findInArray(menu_access["user"], "customize")) {
-                             menu_access["user"].push("customize");
+                         if (!findInArray(menu_access["user"], "other")) {
+                             menu_access["user"].push("other");
                          }
                          submenu_access["user"].push("pages");
                          submenu_access["user"].push("menus");
                      }
                      if (user_info.institute.can_use_custom_css == 1) {
-                         if (!findInArray(menu_access["user"], "customize")) {
-                             menu_access["user"].push("customize");
+                         if (!findInArray(menu_access["user"], "other")) {
+                             menu_access["user"].push("other");
                          }
                          submenu_access["user"].push("css");
                      }
