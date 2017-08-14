@@ -1058,11 +1058,8 @@
 
      function render_axis(myconf) {
 
-         var description = myconf.description ? true : false;
-         console.log(myconf);
-
-
-         var endpoint = '/api/' + myconf.href,
+         var description = myconf.description ? true : false,
+             endpoint = '/api/' + myconf.href,
              mkey = myconf['key'];
 
          /*  EIXOS  */
