@@ -379,11 +379,17 @@
          submenu_label["parameters"].push({
              "units": "Unidades de Medida"
          });
+         submenu_label["parameters"].push({
+             "axis1": "Eixo auxiliar 1"
+         });
+         submenu_label["parameters"].push({
+             "axis2": "Eixo auxiliar 2"
+         });
 
          submenu_label["customize"] = [];
          submenu_label["customize"].push({
-            "menus": "Menus",
-            "files_upload": "Arquivos de valores enviados"
+             "menus": "Menus",
+             "files_upload": "Arquivos de valores enviados"
          });
          submenu_label["customize"].push({
              "pages": "Páginas"
@@ -422,10 +428,10 @@
          });
 
          menu_access["superadmin"] = ["dashboard", "prefs", "parameters", "networks", "admins", "users", "indicator", "axis", "logs", "logout"];
-         submenu_access["superadmin"] = ["countries", "states", "cities", "files_upload", "units"];
+         submenu_access["superadmin"] = ["countries", "states", "cities", "files_upload", "units", "axis1", "axis2"];
 
-         menu_access["admin"] = ["dashboard", "prefs", "users", "parameters","content", "variable_user", "axis", "indicator", "customize", "logs"];
-         submenu_access["admin"] = ["countries", "states", "cities", "files_upload", "files" ,"best_pratice", "units", "css"];
+         menu_access["admin"] = ["dashboard", "prefs", "users", "parameters", "content", "variable_user", "axis", "indicator", "customize", "logs"];
+         submenu_access["admin"] = ["countries", "states", "cities", "files_upload", "files", "best_pratice", "units", "axis1", "axis2", "css"];
 
 
          menu_access["admin"].push("logout");
@@ -1050,6 +1056,161 @@
          };
      }();
 
+     function render_axis() {
+
+         /*  EIXOS  */
+         if ($.getUrlVar("option") == "list" || $.getUrlVar("option") == undefined) {
+
+             var axisList = buildDataTable({
+                 headers: ["Nome", "_"]
+             });
+
+             $("#dashboard-content .content").append(axisList);
+
+             $("#button-add").click(function() {
+                 resetWarnings();
+                 location.hash = "#!/" + getUrlSub() + "?option=add";
+             });
+
+             $("#results").dataTable({
+                 iDisplayLength: 50,
+                 "oLanguage": get_datatable_lang(),
+                 "bProcessing": true,
+                 "sAjaxSource": api_path + '/api/axis?api_key=$$key&content-type=application/json&lang=$$lang&columns=name,url,_,_'.render2({
+                     lang: cur_lang,
+                     key: $.cookie("key")
+                 }),
+                 "aoColumnDefs": [{
+                     "bSearchable": false,
+                     "bSortable": false,
+                     "sClass": "botoes",
+                     "sWidth": "60px",
+                     "aTargets": [1]
+                 }],
+                 "fnDrawCallback": function() {
+                     DTdesenhaBotoes();
+                 }
+             });
+
+         } else if ($.getUrlVar("option") == "add" || $.getUrlVar("option") == "edit") {
+
+             var txtOption = ($.getUrlVar("option") == "add") ? "$$e".render({
+                 e: 'Cadastrar'
+             }) : "$$e".render({
+                 e: 'Editar'
+             });
+
+             var newform = [];
+
+             newform.push({
+                 label: "Nome",
+                 input: ["text,name,itext"]
+             });
+
+             var formbuild = $("#dashboard-content .content").append(buildForm(newform, txtOption));
+             $(formbuild).find("div .field:odd").addClass("odd");
+             $(formbuild).find(".form-buttons").width($(formbuild).find(".form").width());
+
+             $(formbuild).find("#name").qtip($.extend(true, {}, qtip_input, {
+                 content: "Nome do eixo. Ex: Ação Local para Saúde, Bens Naturais Comuns"
+             }));
+
+             if ($.getUrlVar("option") == "edit") {
+                 $.ajax({
+                     type: 'GET',
+                     dataType: 'json',
+                     url: $.getUrlVar("url") + "?api_key=$$key".render2({
+                         key: $.cookie("key")
+                     }),
+                     success: function(data, status, jqXHR) {
+                         switch (jqXHR.status) {
+                             case 200:
+                                 $(formbuild).find("input#name").val(data.name);
+                                 break;
+                         }
+                     },
+                     error: function(data) {
+                         switch (data.status) {
+                             case 400:
+                                 $(".form-aviso").setWarning({
+                                     msg: "Erro: ($$codigo)".render2({
+                                         codigo: $.trataErro(data)
+                                     })
+                                 });
+                                 break;
+                         }
+                     }
+                 });
+             }
+
+             $("#dashboard-content .content .botao-form[ref='enviar']").click(function() {
+                 resetWarnings();
+                 if ($(this).parent().parent().find("#name").val() == "") {
+                     $(".form-aviso").setWarning({
+                         msg: "Por favor informe o Nome"
+                     });
+                 } else {
+
+                     if ($.getUrlVar("option") == "add") {
+                         var action = "create";
+                         var method = "POST";
+                         var url_action = api_path + "/api/axis";
+                     } else {
+                         var action = "update";
+                         var method = "POST";
+                         var url_action = $.getUrlVar("url");
+                     }
+
+                     args = [{
+                         name: "api_key",
+                         value: $.cookie("key")
+                     }, {
+                         name: "axis." + action + ".name",
+                         value: $(this).parent().parent().find("#name").val()
+                     }];
+
+                     $("#dashboard-content .content .botao-form[ref='enviar']").hide();
+                     $.ajax({
+                         type: method,
+                         dataType: 'json',
+                         url: url_action,
+                         data: args,
+                         success: function(data, status, jqXHR) {
+                             $("#aviso").setWarning({
+                                 msg: "Cadastro efetuado com sucesso.".render2({
+                                     codigo: jqXHR.status
+                                 })
+                             });
+                             location.hash = "#!/" + getUrlSub();
+                         },
+                         error: function(data) {
+                             switch (data.status) {
+                                 case 400:
+                                     $("#aviso").setWarning({
+                                         msg: "Erro ao cadastrar. ($$codigo)".render2({
+                                             codigo: $.trataErro(data)
+                                         })
+                                     });
+                                     break;
+                             }
+                             $("#dashboard-content .content .botao-form[ref='enviar']").show();
+                         }
+                     });
+                 }
+             });
+             $("#dashboard-content .content .botao-form[ref='cancelar']").click(function() {
+                 resetWarnings();
+                 history.back();
+             });
+         } else if ($.getUrlVar("option") == "delete") {
+             deleteRegister({
+                 url: $.getUrlVar("url") + "?api_key=$$key".render2({
+                     key: $.cookie("key")
+                 })
+             });
+         }
+     };
+
      var buildContent = function() {
          if ($.inArray(getUrlSub().toString(), menu_access[user_info.role]) >= 0 || $.inArray(getUrlSub().toString(), submenu_access[user_info.role]) >= 0) {
              $.xhrPool.abortAll();
@@ -1463,7 +1624,6 @@
                                              $(formbuild).find("input#value_of_date").val("");
                                              $("#dashboard-content .content .form").find("select").attr("disabled", false);
                                              $("table.history tbody tr").removeClass("selected");
-                                             $("#dashboard-content .content .botao-form[ref='enviar']").show();
                                              $("#dashboard-content .content .botao-form[ref='enviar']").show();
                                          }
                                      });
@@ -4867,157 +5027,7 @@
 
                  }
              } else if (getUrlSub() == "axis") {
-                 /*  EIXOS  */
-                 if ($.getUrlVar("option") == "list" || $.getUrlVar("option") == undefined) {
-
-                     var axisList = buildDataTable({
-                         headers: ["Nome", "_"]
-                     });
-
-                     $("#dashboard-content .content").append(axisList);
-
-                     $("#button-add").click(function() {
-                         resetWarnings();
-                         location.hash = "#!/" + getUrlSub() + "?option=add";
-                     });
-
-                     $("#results").dataTable({
-                         iDisplayLength: 50,
-                         "oLanguage": get_datatable_lang(),
-                         "bProcessing": true,
-                         "sAjaxSource": api_path + '/api/axis?api_key=$$key&content-type=application/json&lang=$$lang&columns=name,url,_,_'.render2({
-                             lang: cur_lang,
-                             key: $.cookie("key")
-                         }),
-                         "aoColumnDefs": [{
-                             "bSearchable": false,
-                             "bSortable": false,
-                             "sClass": "botoes",
-                             "sWidth": "60px",
-                             "aTargets": [1]
-                         }],
-                         "fnDrawCallback": function() {
-                             DTdesenhaBotoes();
-                         }
-                     });
-
-                 } else if ($.getUrlVar("option") == "add" || $.getUrlVar("option") == "edit") {
-
-                     var txtOption = ($.getUrlVar("option") == "add") ? "$$e".render({
-                         e: 'Cadastrar'
-                     }) : "$$e".render({
-                         e: 'Editar'
-                     });
-
-                     var newform = [];
-
-                     newform.push({
-                         label: "Nome",
-                         input: ["text,name,itext"]
-                     });
-
-                     var formbuild = $("#dashboard-content .content").append(buildForm(newform, txtOption));
-                     $(formbuild).find("div .field:odd").addClass("odd");
-                     $(formbuild).find(".form-buttons").width($(formbuild).find(".form").width());
-
-                     $(formbuild).find("#name").qtip($.extend(true, {}, qtip_input, {
-                         content: "Nome do eixo. Ex: Ação Local para Saúde, Bens Naturais Comuns"
-                     }));
-
-                     if ($.getUrlVar("option") == "edit") {
-                         $.ajax({
-                             type: 'GET',
-                             dataType: 'json',
-                             url: $.getUrlVar("url") + "?api_key=$$key".render2({
-                                 key: $.cookie("key")
-                             }),
-                             success: function(data, status, jqXHR) {
-                                 switch (jqXHR.status) {
-                                     case 200:
-                                         $(formbuild).find("input#name").val(data.name);
-                                         break;
-                                 }
-                             },
-                             error: function(data) {
-                                 switch (data.status) {
-                                     case 400:
-                                         $(".form-aviso").setWarning({
-                                             msg: "Erro: ($$codigo)".render2({
-                                                 codigo: $.trataErro(data)
-                                             })
-                                         });
-                                         break;
-                                 }
-                             }
-                         });
-                     }
-
-                     $("#dashboard-content .content .botao-form[ref='enviar']").click(function() {
-                         resetWarnings();
-                         if ($(this).parent().parent().find("#name").val() == "") {
-                             $(".form-aviso").setWarning({
-                                 msg: "Por favor informe o Nome"
-                             });
-                         } else {
-
-                             if ($.getUrlVar("option") == "add") {
-                                 var action = "create";
-                                 var method = "POST";
-                                 var url_action = api_path + "/api/axis";
-                             } else {
-                                 var action = "update";
-                                 var method = "POST";
-                                 var url_action = $.getUrlVar("url");
-                             }
-
-                             args = [{
-                                 name: "api_key",
-                                 value: $.cookie("key")
-                             }, {
-                                 name: "axis." + action + ".name",
-                                 value: $(this).parent().parent().find("#name").val()
-                             }];
-
-                             $("#dashboard-content .content .botao-form[ref='enviar']").hide();
-                             $.ajax({
-                                 type: method,
-                                 dataType: 'json',
-                                 url: url_action,
-                                 data: args,
-                                 success: function(data, status, jqXHR) {
-                                     $("#aviso").setWarning({
-                                         msg: "Cadastro efetuado com sucesso.".render2({
-                                             codigo: jqXHR.status
-                                         })
-                                     });
-                                     location.hash = "#!/" + getUrlSub();
-                                 },
-                                 error: function(data) {
-                                     switch (data.status) {
-                                         case 400:
-                                             $("#aviso").setWarning({
-                                                 msg: "Erro ao cadastrar. ($$codigo)".render2({
-                                                     codigo: $.trataErro(data)
-                                                 })
-                                             });
-                                             break;
-                                     }
-                                     $("#dashboard-content .content .botao-form[ref='enviar']").show();
-                                 }
-                             });
-                         }
-                     });
-                     $("#dashboard-content .content .botao-form[ref='cancelar']").click(function() {
-                         resetWarnings();
-                         history.back();
-                     });
-                 } else if ($.getUrlVar("option") == "delete") {
-                     deleteRegister({
-                         url: $.getUrlVar("url") + "?api_key=$$key".render2({
-                             key: $.cookie("key")
-                         })
-                     });
-                 }
+                 render_axis();
              } else if (getUrlSub() == "indicator") {
                  /*  INDICATOR  */
                  if ($.getUrlVar("option") == "list" || $.getUrlVar("option") == undefined) {
@@ -9868,7 +9878,7 @@
                  if ($.getUrlVar("option") == "list" || $.getUrlVar("option") == undefined) {
 
                      var userList = buildDataTable({
-                         headers: ["Status",  "Data do envio"]
+                         headers: ["Status", "Data do envio"]
                      });
 
 
