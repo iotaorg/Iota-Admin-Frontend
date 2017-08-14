@@ -427,28 +427,28 @@
          menu_access["superadmin"] = ["dashboard", "prefs", "parameters", "networks", "admins", "users", "indicator", "logs", "logout"];
          submenu_access["superadmin"] = ["countries", "states", "cities", "files_upload", "units", "axis1", "axis2"];
 
-         menu_access["admin"] = ["dashboard", "prefs", "users", "parameters", "content", "variable_user",  "indicator", "other", "logs"];
+         menu_access["admin"] = ["dashboard", "prefs", "users", "parameters", "content", "variable_user", "indicator", "other", "logs"];
          submenu_access["admin"] = ["countries", "states", "cities", "files_upload", "files", "best_pratice", "units", "axis", "axis1", "axis2", "css"];
 
 
          menu_access["admin"].push("logout");
          submenu_access["user"] = ["dashboard"];
 
-            if (user_info.institute && user_info.institute.metadata){
+         if (user_info.institute && user_info.institute.metadata) {
 
-                if (user_info.institute.metadata.axis_aux1){
-                    submenu_label["parameters"].push({
-                         "axis1": user_info.institute.metadata.axis_aux1
-                     });
-                }
+             if (user_info.institute.metadata.axis_aux1) {
+                 submenu_label["parameters"].push({
+                     "axis1": user_info.institute.metadata.axis_aux1
+                 });
+             }
 
-                if (user_info.institute.metadata.axis_aux2){
-                    submenu_label["parameters"].push({
-                         "axis2": user_info.institute.metadata.axis_aux2
-                     });
-                }
+             if (user_info.institute.metadata.axis_aux2) {
+                 submenu_label["parameters"].push({
+                     "axis2": user_info.institute.metadata.axis_aux2
+                 });
+             }
 
-            }
+         }
 
 
          if (findInArray(user_info.roles, "user")) {
@@ -5280,15 +5280,15 @@
                          label: "Eixo",
                          input: ["select,axis_id,iselect"]
                      });
-                     if (user_info.institute.metadata.axis_aux1){
+                     if (user_info.institute.metadata.axis_aux1) {
 
-                        newform.push({
+                         newform.push({
                              label: user_info.institute.metadata.axis_aux1,
                              input: ["select,axis_aux1_id,iselect"]
                          });
                      }
-                     if (user_info.institute.metadata.axis_aux2){
-                        newform.push({
+                     if (user_info.institute.metadata.axis_aux2) {
+                         newform.push({
                              label: user_info.institute.metadata.axis_aux2,
                              input: ["select,axis_aux2_id,iselect"]
                          });
@@ -5376,8 +5376,8 @@
                          }
                      });
 
-                    if (user_info.institute.metadata.axis_aux1){
-                        $.ajax({
+                     if (user_info.institute.metadata.axis_aux1) {
+                         $.ajax({
                              async: false,
                              type: 'GET',
                              dataType: 'json',
@@ -5407,9 +5407,9 @@
                              }
                          });
 
-                    }
-                    if (user_info.institute.metadata.axis_aux2){
-                        $.ajax({
+                     }
+                     if (user_info.institute.metadata.axis_aux2) {
+                         $.ajax({
                              async: false,
                              type: 'GET',
                              dataType: 'json',
@@ -5439,7 +5439,7 @@
                              }
                          });
 
-                    }
+                     }
 
 
                      $.each(visibility_level, function(key, value) {
@@ -6149,6 +6149,20 @@
                                      value: $(this).parent().parent().find("#observations").val()
                                  }];
 
+                                 if (user_info.institute.metadata.axis_aux1) {
+                                     args.push({
+                                         name: "indicator.create.axis_dim1_id",
+                                         value: $("#axis_aux1_id").val()
+                                     });
+                                 }
+
+                                 if (user_info.institute.metadata.axis_aux2) {
+                                     args.push({
+                                         name: "indicator.create.axis_dim2_id",
+                                         value: $("#axis_aux2_id").val()
+                                     });
+                                 }
+
                                  if (user_info.user_type == 'user') {
                                      args.push({
                                          name: "indicator.create.visibility_level",
@@ -6450,6 +6464,15 @@
                                          $(formbuild).find("#goal_operator").val(String(data.goal_operator));
                                          $(formbuild).find("#goal_explanation").val(data.goal_explanation);
                                          $(formbuild).find("#axis_id").val(data.axis_id);
+
+
+                                         if (user_info.institute.metadata.axis_aux1 && data.axis_dim1) {
+                                             $(formbuild).find("#axis_aux1_id").val(data.axis_dim1.id);
+                                         }
+                                         if (user_info.institute.metadata.axis_aux2 && data.axis_dim2) {
+                                             $(formbuild).find("#axis_aux2_id").val(data.axis_dim2.id);
+                                         }
+
                                          $(formbuild).find("#source").val(data.source);
                                          $(formbuild).find("#tags").val(data.tags);
                                          $(formbuild).find("#observations").val(data.observations);
@@ -6588,6 +6611,20 @@
                                      value: $(this).parent().parent().find("#observations").val()
                                  }];
 
+
+                                 if (user_info.institute.metadata.axis_aux1) {
+                                     args.push({
+                                         name: "indicator.update.axis_dim1_id",
+                                         value: $("#axis_aux1_id").val()
+                                     });
+                                 }
+
+                                 if (user_info.institute.metadata.axis_aux2) {
+                                     args.push({
+                                         name: "indicator.update.axis_dim2_id",
+                                         value: $("#axis_aux2_id").val()
+                                     });
+                                 }
 
                                  args.push({
                                      name: "indicator.update.visibility_level",

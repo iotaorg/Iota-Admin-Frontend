@@ -2110,7 +2110,7 @@ function formataFormula(formula, variables, vvariables) {
     }
 
     new_formula = $.trim(new_formula);
-    console.log(is_string,  new_formula);
+
     new_formula.replace(/ +/g, ' ');
     new_formula.replace(/ /g, '&nbsp;');
 
