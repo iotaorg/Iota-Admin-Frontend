@@ -1138,15 +1138,15 @@
              $(formbuild).find("div .field:odd").addClass("odd");
              $(formbuild).find(".form-buttons").width($(formbuild).find(".form").width());
 
-             if (key == 'axis') {
+             if (mkey == 'axis') {
                  $(formbuild).find("#name").qtip($.extend(true, {}, qtip_input, {
                      content: "Ex: Ação Local para Saúde"
                  }));
-             } else if (key == 'axis_dim1') {
+             } else if (mkey == 'axis_dim1') {
                  $(formbuild).find("#name").qtip($.extend(true, {}, qtip_input, {
                      content: "Ex: Cidade segura"
                  }));
-             } else if (key == 'axis_dim2') {
+             } else if (mkey == 'axis_dim2') {
                  $(formbuild).find("#name").qtip($.extend(true, {}, qtip_input, {
                      content: "Ex: 0 a 3 anos"
                  }));
@@ -5080,7 +5080,7 @@
 
                  render_axis({
                      href: 'axis',
-                     description: 0,
+                     description: 1,
                      key: 'axis'
                  });
 
