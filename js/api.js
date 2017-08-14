@@ -5280,6 +5280,20 @@
                          label: "Eixo",
                          input: ["select,axis_id,iselect"]
                      });
+                     if (user_info.institute.metadata.axis_aux1){
+
+                        newform.push({
+                             label: user_info.institute.metadata.axis_aux1,
+                             input: ["select,axis_aux1_id,iselect"]
+                         });
+                     }
+                     if (user_info.institute.metadata.axis_aux2){
+                        newform.push({
+                             label: user_info.institute.metadata.axis_aux2,
+                             input: ["select,axis_aux2_id,iselect"]
+                         });
+                     }
+
                      if (!(user_info.institute.metadata.hide_indicator_source == 1)) {
                          newform.push({
                              label: "Fonte",
@@ -5361,6 +5375,72 @@
                              });
                          }
                      });
+
+                    if (user_info.institute.metadata.axis_aux1){
+                        $.ajax({
+                             async: false,
+                             type: 'GET',
+                             dataType: 'json',
+                             url: api_path + '/api/axis-dim1?api_key=$$key'.render2({
+                                 key: $.cookie("key")
+                             }),
+                             success: function(data, textStatus, jqXHR) {
+                                 data.axis.sort(function(a, b) {
+                                     a = a.name,
+                                         b = b.name;
+
+                                     return a.localeCompare(b);
+                                 });
+                                 $("#axis_aux1_id").append($("<option></option>").val('0').html('Nenhum'));
+
+                                 $.each(data.axis, function(index, item) {
+                                     $("#axis_aux1_id").append($("<option></option>").val(item.id).html(item.name));
+                                 });
+
+                             },
+                             error: function(data) {
+                                 $("#aviso").setWarning({
+                                     msg: "Erro ao carregar ($$codigo)".render2({
+                                         codigo: $.trataErro(data)
+                                     })
+                                 });
+                             }
+                         });
+
+                    }
+                    if (user_info.institute.metadata.axis_aux2){
+                        $.ajax({
+                             async: false,
+                             type: 'GET',
+                             dataType: 'json',
+                             url: api_path + '/api/axis-dim2?api_key=$$key'.render2({
+                                 key: $.cookie("key")
+                             }),
+                             success: function(data, textStatus, jqXHR) {
+                                 data.axis.sort(function(a, b) {
+                                     a = a.name,
+                                         b = b.name;
+
+                                     return a.localeCompare(b);
+                                 });
+                                 $("#axis_aux2_id").append($("<option></option>").val('0').html('Nenhum'));
+
+                                 $.each(data.axis, function(index, item) {
+                                     $("#axis_aux2_id").append($("<option></option>").val(item.id).html(item.name));
+                                 });
+
+                             },
+                             error: function(data) {
+                                 $("#aviso").setWarning({
+                                     msg: "Erro ao carregar ($$codigo)".render2({
+                                         codigo: $.trataErro(data)
+                                     })
+                                 });
+                             }
+                         });
+
+                    }
+
 
                      $.each(visibility_level, function(key, value) {
                          $("#dashboard-content .content select#visibility_level").append($("<option></option>").val(key).html(value));
