@@ -1056,13 +1056,20 @@
          };
      }();
 
-     function render_axis() {
+     function render_axis(myconf) {
+
+         var description = myconf.description ? true : false;
+         console.log(myconf);
+
+
+         var endpoint = '/api/' + myconf.href,
+             mkey = myconf['key'];
 
          /*  EIXOS  */
          if ($.getUrlVar("option") == "list" || $.getUrlVar("option") == undefined) {
 
              var axisList = buildDataTable({
-                 headers: ["Nome", "_"]
+                 headers: ["Nome", "_"],
              });
 
              $("#dashboard-content .content").append(axisList);
@@ -1076,7 +1083,7 @@
                  iDisplayLength: 50,
                  "oLanguage": get_datatable_lang(),
                  "bProcessing": true,
-                 "sAjaxSource": api_path + '/api/axis?api_key=$$key&content-type=application/json&lang=$$lang&columns=name,url,_,_'.render2({
+                 "sAjaxSource": api_path + endpoint + '?api_key=$$key&content-type=application/json&lang=$$lang&columns=name,url,_,_'.render2({
                      lang: cur_lang,
                      key: $.cookie("key")
                  }),
@@ -1107,13 +1114,30 @@
                  input: ["text,name,itext"]
              });
 
+             if (description) {
+                 newform.push({
+                     label: "Descrição",
+                     input: ["text,description,itext"]
+                 });
+             }
+
              var formbuild = $("#dashboard-content .content").append(buildForm(newform, txtOption));
              $(formbuild).find("div .field:odd").addClass("odd");
              $(formbuild).find(".form-buttons").width($(formbuild).find(".form").width());
 
-             $(formbuild).find("#name").qtip($.extend(true, {}, qtip_input, {
-                 content: "Nome do eixo. Ex: Ação Local para Saúde, Bens Naturais Comuns"
-             }));
+             if (key == 'axis') {
+                 $(formbuild).find("#name").qtip($.extend(true, {}, qtip_input, {
+                     content: "Ex: Ação Local para Saúde"
+                 }));
+             } else if (key == 'axis_dim1') {
+                 $(formbuild).find("#name").qtip($.extend(true, {}, qtip_input, {
+                     content: "Ex: Cidade segura"
+                 }));
+             } else if (key == 'axis_dim2') {
+                 $(formbuild).find("#name").qtip($.extend(true, {}, qtip_input, {
+                     content: "Ex: 0 a 3 anos"
+                 }));
+             }
 
              if ($.getUrlVar("option") == "edit") {
                  $.ajax({
@@ -1126,6 +1150,11 @@
                          switch (jqXHR.status) {
                              case 200:
                                  $(formbuild).find("input#name").val(data.name);
+
+                                 if (description) {
+                                     $(formbuild).find("input#description").val(data.description);
+                                 }
+
                                  break;
                          }
                      },
@@ -1154,7 +1183,7 @@
                      if ($.getUrlVar("option") == "add") {
                          var action = "create";
                          var method = "POST";
-                         var url_action = api_path + "/api/axis";
+                         var url_action = api_path + endpoint;
                      } else {
                          var action = "update";
                          var method = "POST";
@@ -1165,9 +1194,17 @@
                          name: "api_key",
                          value: $.cookie("key")
                      }, {
-                         name: "axis." + action + ".name",
+                         name: mkey + "." + action + ".name",
                          value: $(this).parent().parent().find("#name").val()
                      }];
+
+
+                     if (description) {
+                         args.push({
+                             name: mkey + "." + action + ".description",
+                             value: $(this).parent().parent().find("#description").val()
+                         });
+                     }
 
                      $("#dashboard-content .content .botao-form[ref='enviar']").hide();
                      $.ajax({
@@ -5027,7 +5064,29 @@
 
                  }
              } else if (getUrlSub() == "axis") {
-                 render_axis();
+
+                 render_axis({
+                     href: 'axis',
+                     description: 0,
+                     key: 'axis'
+                 });
+
+             } else if (getUrlSub() == "axis1") {
+
+                 render_axis({
+                     href: 'axis-dim1',
+                     description: 1,
+                     key: 'axis_dim1'
+                 });
+
+             } else if (getUrlSub() == "axis2") {
+
+                 render_axis({
+                     href: 'axis-dim2',
+                     description: 1,
+                     key: 'axis_dim2'
+                 });
+
              } else if (getUrlSub() == "indicator") {
                  /*  INDICATOR  */
                  if ($.getUrlVar("option") == "list" || $.getUrlVar("option") == undefined) {
