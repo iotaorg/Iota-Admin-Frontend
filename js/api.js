@@ -9879,23 +9879,31 @@
 
                      // best pratrice dim1
 
-                     if (user_info.institute.metadata.axis_aux1) {
-                         newform.push({
-                             label: user_info.institute.metadata.axis_aux1,
-                             input: ["select,axis_aux1_id,iselect"]
-                         });
+                     if (user_info.institute.metadata.bp_axis_aux1_enabled) {
+                         if (user_info.institute.metadata.axis_aux1) {
+                             newform.push({
+                                 label: user_info.institute.metadata.axis_aux1,
+                                 input: ["select,axis_aux1_id,iselect"]
+                             });
+                         }
                      }
-                     if (user_info.institute.metadata.axis_aux2) {
-                         newform.push({
-                             label: user_info.institute.metadata.axis_aux2,
-                             input: ["select,axis_aux2_id,iselect"]
-                         });
+
+                     if (user_info.institute.metadata.bp_axis_aux2_enabled) {
+
+                         if (user_info.institute.metadata.axis_aux2) {
+                             newform.push({
+                                 label: user_info.institute.metadata.axis_aux2,
+                                 input: ["select,axis_aux2_id,iselect"]
+                             });
+                         }
                      }
-                     if (user_info.institute.metadata.axis_aux3) {
-                         newform.push({
-                             label: user_info.institute.metadata.axis_aux3,
-                             input: ["select,axis_aux3_id,iselect"]
-                         });
+                     if (user_info.institute.metadata.bp_axis_aux3_enabled) {
+                         if (user_info.institute.metadata.axis_aux3) {
+                             newform.push({
+                                 label: user_info.institute.metadata.axis_aux3,
+                                 input: ["select,axis_aux3_id,iselect"]
+                             });
+                         }
                      }
 
 
@@ -9904,7 +9912,7 @@
                          input: ["text,name,itext"]
                      });
 
-                    if (user_info.institute.metadata.best_pratice_reference_city_enabled) {
+                     if (user_info.institute.metadata.best_pratice_reference_city_enabled) {
                          newform.push({
                              label: "Cidade Referência",
                              input: ["text,reference_city,itext"]
@@ -10162,11 +10170,11 @@
                                  value: $(this).parent().parent().find("#axis_id option:selected").val()
                              }];
 
-                            if (user_info.institute.metadata.best_pratice_reference_city_enabled) {
+                             if (user_info.institute.metadata.best_pratice_reference_city_enabled) {
                                  args.push({
                                      name: "best_pratice." + action + ".reference_city",
                                      value: $("#reference_city").val()
-                                });
+                                 });
                              }
 
                              if (user_info.institute.metadata.axis_aux1) {
