@@ -425,10 +425,10 @@
          });
 
          menu_access["superadmin"] = ["dashboard", "prefs", "parameters", "networks", "admins", "users", "indicator", "logs", "logout"];
-         submenu_access["superadmin"] = ["countries", "states", "cities", "files_upload", "units", "axis1", "axis2"];
+         submenu_access["superadmin"] = ["countries", "states", "cities", "files_upload", "units", "axis1", "axis2", "axis3"];
 
          menu_access["admin"] = ["dashboard", "prefs", "users", "parameters", "content", "variable_user", "indicator", "other", "logs"];
-         submenu_access["admin"] = ["countries", "states", "cities", "files_upload", "files", "best_pratice", "units", "axis", "axis1", "axis2", "css"];
+         submenu_access["admin"] = ["countries", "states", "cities", "files_upload", "files", "best_pratice", "units", "axis", "axis1", "axis2", "axis3", "css"];
 
 
          menu_access["admin"].push("logout");
@@ -445,6 +445,11 @@
              if (user_info.institute.metadata.axis_aux2) {
                  submenu_label["parameters"].push({
                      "axis2": user_info.institute.metadata.axis_aux2
+                 });
+             }
+             if (user_info.institute.metadata.axis_aux3) {
+                 submenu_label["parameters"].push({
+                     "axis3": user_info.institute.metadata.axis_aux3
                  });
              }
 
@@ -587,6 +592,104 @@
          });
      };
 
+     function load_dim_extra() {
+         if (user_info.institute.metadata.axis_aux1) {
+             $.ajax({
+                 async: false,
+                 type: 'GET',
+                 dataType: 'json',
+                 url: api_path + '/api/axis-dim1?api_key=$$key'.render2({
+                     key: $.cookie("key")
+                 }),
+                 success: function(data, textStatus, jqXHR) {
+                     data.axis.sort(function(a, b) {
+                         a = a.name,
+                             b = b.name;
+
+                         return a.localeCompare(b);
+                     });
+                     $("#axis_aux1_id").append($("<option></option>").val('0').html('Nenhum'));
+
+                     $.each(data.axis, function(index, item) {
+                         $("#axis_aux1_id").append($("<option></option>").val(item.id).html(item.name));
+                     });
+
+                 },
+                 error: function(data) {
+                     $("#aviso").setWarning({
+                         msg: "Erro ao carregar ($$codigo)".render2({
+                             codigo: $.trataErro(data)
+                         })
+                     });
+                 }
+             });
+
+         }
+         if (user_info.institute.metadata.axis_aux2) {
+             $.ajax({
+                 async: false,
+                 type: 'GET',
+                 dataType: 'json',
+                 url: api_path + '/api/axis-dim2?api_key=$$key'.render2({
+                     key: $.cookie("key")
+                 }),
+                 success: function(data, textStatus, jqXHR) {
+                     data.axis.sort(function(a, b) {
+                         a = a.name,
+                             b = b.name;
+
+                         return a.localeCompare(b);
+                     });
+                     $("#axis_aux2_id").append($("<option></option>").val('0').html('Nenhum'));
+
+                     $.each(data.axis, function(index, item) {
+                         $("#axis_aux2_id").append($("<option></option>").val(item.id).html(item.name));
+                     });
+
+                 },
+                 error: function(data) {
+                     $("#aviso").setWarning({
+                         msg: "Erro ao carregar ($$codigo)".render2({
+                             codigo: $.trataErro(data)
+                         })
+                     });
+                 }
+             });
+
+         }
+         if (user_info.institute.metadata.axis_aux3) {
+             $.ajax({
+                 async: false,
+                 type: 'GET',
+                 dataType: 'json',
+                 url: api_path + '/api/axis-dim3?api_key=$$key'.render2({
+                     key: $.cookie("key")
+                 }),
+                 success: function(data, textStatus, jqXHR) {
+                     data.axis.sort(function(a, b) {
+                         a = a.name,
+                             b = b.name;
+
+                         return a.localeCompare(b);
+                     });
+                     $("#axis_aux3_id").append($("<option></option>").val('0').html('Nenhum'));
+
+                     $.each(data.axis, function(index, item) {
+                         $("#axis_aux3_id").append($("<option></option>").val(item.id).html(item.name));
+                     });
+
+                 },
+                 error: function(data) {
+                     $("#aviso").setWarning({
+                         msg: "Erro ao carregar ($$codigo)".render2({
+                             codigo: $.trataErro(data)
+                         })
+                     });
+                 }
+             });
+
+         }
+     }
      var current_map_string = '';
      var map;
 
@@ -1074,7 +1177,10 @@
 
      function render_axis(myconf) {
 
+         $('#header-title .title').html(myconf.title);
+
          var description = myconf.description ? true : false,
+             metaconfig = myconf.metaconfig ? true : false,
              endpoint = '/api/' + myconf.href,
              mkey = myconf['key'];
 
@@ -1133,6 +1239,12 @@
                      input: ["text,description,itext"]
                  });
              }
+             if (metaconfig) {
+                 newform.push({
+                     label: "Meta Configuração",
+                     input: ["text,metaconfig,itext"]
+                 });
+             }
 
              var formbuild = $("#dashboard-content .content").append(buildForm(newform, txtOption));
              $(formbuild).find("div .field:odd").addClass("odd");
@@ -1150,6 +1262,10 @@
                  $(formbuild).find("#name").qtip($.extend(true, {}, qtip_input, {
                      content: "Ex: 0 a 3 anos"
                  }));
+             } else if (mkey == 'axis_dim3') {
+                 $(formbuild).find("#name").qtip($.extend(true, {}, qtip_input, {
+                     content: "Ex: Acabar com a pobreza em todas as suas formas, em todos os lugares"
+                 }));
              }
 
              if ($.getUrlVar("option") == "edit") {
@@ -1166,6 +1282,9 @@
 
                                  if (description) {
                                      $(formbuild).find("input#description").val(data.description);
+                                 }
+                                 if (metaconfig) {
+                                     $(formbuild).find("input#metaconfig").val(data.metaconfig);
                                  }
 
                                  break;
@@ -1216,6 +1335,13 @@
                          args.push({
                              name: mkey + "." + action + ".description",
                              value: $(this).parent().parent().find("#description").val()
+                         });
+                     }
+
+                     if (metaconfig) {
+                         args.push({
+                             name: mkey + "." + action + ".metaconfig",
+                             value: $(this).parent().parent().find("#metaconfig").val()
                          });
                      }
 
@@ -5079,6 +5205,7 @@
              } else if (getUrlSub() == "axis") {
 
                  render_axis({
+                     title: 'Eixos',
                      href: 'axis',
                      description: 1,
                      key: 'axis'
@@ -5087,6 +5214,7 @@
              } else if (getUrlSub() == "axis1") {
 
                  render_axis({
+                     title: user_info.institute && user_info.institute.metadata.axis_aux1 || 'aux 1',
                      href: 'axis-dim1',
                      description: 1,
                      key: 'axis_dim1'
@@ -5095,9 +5223,19 @@
              } else if (getUrlSub() == "axis2") {
 
                  render_axis({
+                     title: user_info.institute && user_info.institute.metadata.axis_aux2 || 'aux 2',
                      href: 'axis-dim2',
                      description: 1,
                      key: 'axis_dim2'
+                 });
+             } else if (getUrlSub() == "axis3") {
+
+                 render_axis({
+                     title: user_info.institute && user_info.institute.metadata.axis_aux3 || 'aux 3',
+                     href: 'axis-dim3',
+                     description: 1,
+                     metaconfig: 1,
+                     key: 'axis_dim3'
                  });
 
              } else if (getUrlSub() == "indicator") {
@@ -5281,7 +5419,6 @@
                          input: ["select,axis_id,iselect"]
                      });
                      if (user_info.institute.metadata.axis_aux1) {
-
                          newform.push({
                              label: user_info.institute.metadata.axis_aux1,
                              input: ["select,axis_aux1_id,iselect"]
@@ -5291,6 +5428,12 @@
                          newform.push({
                              label: user_info.institute.metadata.axis_aux2,
                              input: ["select,axis_aux2_id,iselect"]
+                         });
+                     }
+                     if (user_info.institute.metadata.axis_aux3) {
+                         newform.push({
+                             label: user_info.institute.metadata.axis_aux3,
+                             input: ["select,axis_aux3_id,iselect"]
                          });
                      }
 
@@ -5376,70 +5519,7 @@
                          }
                      });
 
-                     if (user_info.institute.metadata.axis_aux1) {
-                         $.ajax({
-                             async: false,
-                             type: 'GET',
-                             dataType: 'json',
-                             url: api_path + '/api/axis-dim1?api_key=$$key'.render2({
-                                 key: $.cookie("key")
-                             }),
-                             success: function(data, textStatus, jqXHR) {
-                                 data.axis.sort(function(a, b) {
-                                     a = a.name,
-                                         b = b.name;
-
-                                     return a.localeCompare(b);
-                                 });
-                                 $("#axis_aux1_id").append($("<option></option>").val('0').html('Nenhum'));
-
-                                 $.each(data.axis, function(index, item) {
-                                     $("#axis_aux1_id").append($("<option></option>").val(item.id).html(item.name));
-                                 });
-
-                             },
-                             error: function(data) {
-                                 $("#aviso").setWarning({
-                                     msg: "Erro ao carregar ($$codigo)".render2({
-                                         codigo: $.trataErro(data)
-                                     })
-                                 });
-                             }
-                         });
-
-                     }
-                     if (user_info.institute.metadata.axis_aux2) {
-                         $.ajax({
-                             async: false,
-                             type: 'GET',
-                             dataType: 'json',
-                             url: api_path + '/api/axis-dim2?api_key=$$key'.render2({
-                                 key: $.cookie("key")
-                             }),
-                             success: function(data, textStatus, jqXHR) {
-                                 data.axis.sort(function(a, b) {
-                                     a = a.name,
-                                         b = b.name;
-
-                                     return a.localeCompare(b);
-                                 });
-                                 $("#axis_aux2_id").append($("<option></option>").val('0').html('Nenhum'));
-
-                                 $.each(data.axis, function(index, item) {
-                                     $("#axis_aux2_id").append($("<option></option>").val(item.id).html(item.name));
-                                 });
-
-                             },
-                             error: function(data) {
-                                 $("#aviso").setWarning({
-                                     msg: "Erro ao carregar ($$codigo)".render2({
-                                         codigo: $.trataErro(data)
-                                     })
-                                 });
-                             }
-                         });
-
-                     }
+                     load_dim_extra();
 
 
                      $.each(visibility_level, function(key, value) {
@@ -6162,6 +6242,12 @@
                                          value: $("#axis_aux2_id").val()
                                      });
                                  }
+                                 if (user_info.institute.metadata.axis_aux3) {
+                                     args.push({
+                                         name: "indicator.create.axis_dim3_id",
+                                         value: $("#axis_aux3_id").val()
+                                     });
+                                 }
 
                                  if (user_info.user_type == 'user') {
                                      args.push({
@@ -6472,6 +6558,9 @@
                                          if (user_info.institute.metadata.axis_aux2 && data.axis_dim2) {
                                              $(formbuild).find("#axis_aux2_id").val(data.axis_dim2.id);
                                          }
+                                         if (user_info.institute.metadata.axis_aux3 && data.axis_dim3) {
+                                             $(formbuild).find("#axis_aux3_id").val(data.axis_dim3.id);
+                                         }
 
                                          $(formbuild).find("#source").val(data.source);
                                          $(formbuild).find("#tags").val(data.tags);
@@ -6623,6 +6712,12 @@
                                      args.push({
                                          name: "indicator.update.axis_dim2_id",
                                          value: $("#axis_aux2_id").val()
+                                     });
+                                 }
+                                 if (user_info.institute.metadata.axis_aux3) {
+                                     args.push({
+                                         name: "indicator.update.axis_dim3_id",
+                                         value: $("#axis_aux3_id").val()
                                      });
                                  }
 
@@ -9781,6 +9876,29 @@
                          label: "Eixo",
                          input: ["select,axis_id,iselect"]
                      });
+
+                     // best pratrice dim1
+
+                     if (user_info.institute.metadata.axis_aux1) {
+                         newform.push({
+                             label: user_info.institute.metadata.axis_aux1,
+                             input: ["select,axis_aux1_id,iselect"]
+                         });
+                     }
+                     if (user_info.institute.metadata.axis_aux2) {
+                         newform.push({
+                             label: user_info.institute.metadata.axis_aux2,
+                             input: ["select,axis_aux2_id,iselect"]
+                         });
+                     }
+                     if (user_info.institute.metadata.axis_aux3) {
+                         newform.push({
+                             label: user_info.institute.metadata.axis_aux3,
+                             input: ["select,axis_aux3_id,iselect"]
+                         });
+                     }
+
+
                      newform.push({
                          label: "Nome",
                          input: ["text,name,itext"]
@@ -9858,6 +9976,8 @@
                          }
                      });
 
+                     load_dim_extra();
+
                      if ($.getUrlVar("option") == "edit") {
                          $.ajax({
                              async: false,
@@ -9869,23 +9989,33 @@
                              success: function(data, status, jqXHR) {
                                  switch (jqXHR.status) {
                                      case 200:
-                                         $(formbuild).find("input#name").val(data.name);
-
-                                         $(formbuild).find("textarea#description").val(data.description);
-                                         $(formbuild).find("textarea#goals").val(data.goals);
-                                         $(formbuild).find("textarea#schedule").val(data.schedule);
-                                         $(formbuild).find("textarea#results").val(data.results);
-                                         $(formbuild).find("textarea#institutions_involved").val(data.institutions_involved);
-                                         $(formbuild).find("textarea#contacts").val(data.contatcts);
-                                         $(formbuild).find("textarea#sources").val(data.sources);
-                                         if (!($(formbuild).find("textarea#sources").val() == data.sources)) {
-                                             $(formbuild).find("textarea#sources").append($("<option></option>").val(data.sources).html(data.sources).attr("source-id", '?'));
-                                             $(formbuild).find("textarea#sources").val(data.sources);
+                                         $("#name").val(data.name);
+                                         $("#description").val(data.description);
+                                         $("#goals").val(data.goals);
+                                         $("#schedule").val(data.schedule);
+                                         $("#results").val(data.results);
+                                         $("#institutions_involved").val(data.institutions_involved);
+                                         $("#contacts").val(data.contatcts);
+                                         $("#sources").val(data.sources);
+                                         if (!($("#sources").val() == data.sources)) {
+                                             $("#sources").append($("<option></option>").val(data.sources).html(data.sources).attr("source-id", '?'));
+                                             $("#sources").val(data.sources);
                                          }
 
-                                         $(formbuild).find("input#tags").val(data.tags);
-                                         $(formbuild).find("select#axis_id").val(data.axis_id);
-                                         $(formbuild).find("select#axis_id").attr("selected-id", data.axis_id);
+                                         $("#tags").val(data.tags);
+                                         $("#axis_id").val(data.axis_id).attr("selected-id", data.axis_id);
+
+
+                                         if (user_info.institute.metadata.axis_aux1 && data.axis_dim1) {
+                                             $("#axis_aux1_id").val(data.axis_dim1.id);
+                                         }
+                                         if (user_info.institute.metadata.axis_aux2 && data.axis_dim2) {
+                                             $("#axis_aux2_id").val(data.axis_dim2.id);
+                                         }
+                                         if (user_info.institute.metadata.axis_aux3 && data.axis_dim3) {
+                                             $("#axis_aux3_id").val(data.axis_dim3.id);
+                                         }
+
                                          break;
                                  }
                              },
@@ -10020,6 +10150,27 @@
                                  name: "best_pratice." + action + ".axis_id",
                                  value: $(this).parent().parent().find("#axis_id option:selected").val()
                              }];
+
+
+                             if (user_info.institute.metadata.axis_aux1) {
+                                 args.push({
+                                     name: "best_pratice." + action + ".axis_dim1_id",
+                                     value: $("#axis_aux1_id").val()
+                                 });
+                             }
+
+                             if (user_info.institute.metadata.axis_aux2) {
+                                 args.push({
+                                     name: "best_pratice." + action + ".axis_dim2_id",
+                                     value: $("#axis_aux2_id").val()
+                                 });
+                             }
+                             if (user_info.institute.metadata.axis_aux3) {
+                                 args.push({
+                                     name: "best_pratice." + action + ".axis_dim3_id",
+                                     value: $("#axis_aux3_id").val()
+                                 });
+                             }
 
                              $("#dashboard-content .content .botao-form[ref='enviar']").hide();
                              $.ajax({
