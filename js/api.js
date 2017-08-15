@@ -5394,6 +5394,10 @@
                          input: ["select,sort_direction,iselect"]
                      });
 
+                     if (!user_info.institute.metadata){
+                        user_info.institute.metadata = {};
+                     }
+
                      if (!(user_info.institute.metadata.ods == 1)) {
                          newform.push({
                              label: "Referência de Meta",
