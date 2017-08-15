@@ -225,6 +225,14 @@
                          case 200:
                              user_info = data;
 
+                            // superadmin não tem institute, nao sei se isso é uma feature ou bug ainda
+                             if (!user_info.institute){
+                                user_info.institute = {};
+                             }
+                             if (!user_info.institute.metadata){
+                                user_info.institute.metadata = {};
+                             }
+
 
                              user_info.role = "";
 
@@ -5393,10 +5401,6 @@
                          label: "Direção de classificação",
                          input: ["select,sort_direction,iselect"]
                      });
-
-                     if (!user_info.institute.metadata){
-                        user_info.institute.metadata = {};
-                     }
 
                      if (!(user_info.institute.metadata.ods == 1)) {
                          newform.push({
