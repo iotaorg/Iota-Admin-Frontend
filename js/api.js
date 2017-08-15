@@ -9903,6 +9903,14 @@
                          label: "Nome",
                          input: ["text,name,itext"]
                      });
+
+                    if (user_info.institute.metadata.best_pratice_reference_city_enabled) {
+                         newform.push({
+                             label: "Cidade Referência",
+                             input: ["text,reference_city,itext"]
+                         });
+                     }
+
                      newform.push({
                          label: "Descrição",
                          input: ["textarea,description"]
@@ -10014,6 +10022,9 @@
                                          }
                                          if (user_info.institute.metadata.axis_aux3 && data.axis_dim3) {
                                              $("#axis_aux3_id").val(data.axis_dim3.id);
+                                         }
+                                         if (user_info.institute.metadata.best_pratice_reference_city_enabled) {
+                                             $("#reference_city").val(data.reference_city);
                                          }
 
                                          break;
@@ -10151,6 +10162,12 @@
                                  value: $(this).parent().parent().find("#axis_id option:selected").val()
                              }];
 
+                            if (user_info.institute.metadata.best_pratice_reference_city_enabled) {
+                                 args.push({
+                                     name: "best_pratice." + action + ".reference_city",
+                                     value: $("#reference_city").val()
+                                });
+                             }
 
                              if (user_info.institute.metadata.axis_aux1) {
                                  args.push({
