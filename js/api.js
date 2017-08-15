@@ -10177,20 +10177,21 @@
                                  });
                              }
 
-                             if (user_info.institute.metadata.axis_aux1) {
+
+                             if (user_info.institute.metadata.bp_axis_aux1_enabled && user_info.institute.metadata.axis_aux1) {
                                  args.push({
                                      name: "best_pratice." + action + ".axis_dim1_id",
                                      value: $("#axis_aux1_id").val()
                                  });
                              }
 
-                             if (user_info.institute.metadata.axis_aux2) {
+                             if (user_info.institute.metadata.bp_axis_aux2_enabled && user_info.institute.metadata.axis_aux2) {
                                  args.push({
                                      name: "best_pratice." + action + ".axis_dim2_id",
                                      value: $("#axis_aux2_id").val()
                                  });
                              }
-                             if (user_info.institute.metadata.axis_aux3) {
+                             if (user_info.institute.metadata.bp_axis_aux3_enabled &&  user_info.institute.metadata.axis_aux3) {
                                  args.push({
                                      name: "best_pratice." + action + ".axis_dim3_id",
                                      value: $("#axis_aux3_id").val()
