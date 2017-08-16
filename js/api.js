@@ -433,10 +433,10 @@
          });
 
          menu_access["superadmin"] = ["dashboard", "prefs", "parameters", "networks", "admins", "users", "indicator", "logs", "logout"];
-         submenu_access["superadmin"] = ["countries", "states", "cities", "files_upload", "units", "axis1", "axis2", "axis3"];
+         submenu_access["superadmin"] = ["countries", "states", "cities", "files_upload", "units", "axis1", "axis2", "axis3", "axis4"];
 
          menu_access["admin"] = ["dashboard", "prefs", "users", "parameters", "content", "variable_user", "indicator", "other", "logs"];
-         submenu_access["admin"] = ["countries", "states", "cities", "files_upload", "files", "best_pratice", "units", "axis", "axis1", "axis2", "axis3", "css"];
+         submenu_access["admin"] = ["countries", "states", "cities", "files_upload", "files", "best_pratice", "units", "axis", "axis1", "axis2","axis3", "axis4", "css"];
 
 
          menu_access["admin"].push("logout");
@@ -458,6 +458,11 @@
              if (user_info.institute.metadata.axis_aux3) {
                  submenu_label["parameters"].push({
                      "axis3": user_info.institute.metadata.axis_aux3
+                 });
+             }
+             if (user_info.institute.metadata.axis_aux4) {
+                 submenu_label["parameters"].push({
+                     "axis4": user_info.institute.metadata.axis_aux4
                  });
              }
 
@@ -684,6 +689,38 @@
 
                      $.each(data.axis, function(index, item) {
                          $("#axis_aux3_id").append($("<option></option>").val(item.id).html(item.name));
+                     });
+
+                 },
+                 error: function(data) {
+                     $("#aviso").setWarning({
+                         msg: "Erro ao carregar ($$codigo)".render2({
+                             codigo: $.trataErro(data)
+                         })
+                     });
+                 }
+             });
+
+         }
+         if (user_info.institute.metadata.axis_aux4) {
+             $.ajax({
+                 async: false,
+                 type: 'GET',
+                 dataType: 'json',
+                 url: api_path + '/api/axis-dim4?api_key=$$key'.render2({
+                     key: $.cookie("key")
+                 }),
+                 success: function(data, textStatus, jqXHR) {
+                     data.axis.sort(function(a, b) {
+                         a = a.name,
+                             b = b.name;
+
+                         return a.localeCompare(b);
+                     });
+                     $("#axis_aux4_id").append($("<option></option>").val('0').html('Nenhum'));
+
+                     $.each(data.axis, function(index, item) {
+                         $("#axis_aux4_id").append($("<option></option>").val(item.id).html(item.name));
                      });
 
                  },
@@ -1188,7 +1225,6 @@
          $('#header-title .title').html(myconf.title);
 
          var description = myconf.description ? true : false,
-             metaconfig = myconf.metaconfig ? true : false,
              endpoint = '/api/' + myconf.href,
              mkey = myconf['key'];
 
@@ -1247,12 +1283,7 @@
                      input: ["text,description,itext"]
                  });
              }
-             if (metaconfig) {
-                 newform.push({
-                     label: "Meta Configuração",
-                     input: ["text,metaconfig,itext"]
-                 });
-             }
+
 
              var formbuild = $("#dashboard-content .content").append(buildForm(newform, txtOption));
              $(formbuild).find("div .field:odd").addClass("odd");
@@ -1272,7 +1303,7 @@
                  }));
              } else if (mkey == 'axis_dim3') {
                  $(formbuild).find("#name").qtip($.extend(true, {}, qtip_input, {
-                     content: "Ex: Acabar com a pobreza em todas as suas formas, em todos os lugares"
+                     content: "Ex: 1; Descrição: Acabar com a pobreza em todas as suas formas, em todos os lugares"
                  }));
              }
 
@@ -1290,9 +1321,6 @@
 
                                  if (description) {
                                      $(formbuild).find("input#description").val(data.description);
-                                 }
-                                 if (metaconfig) {
-                                     $(formbuild).find("input#metaconfig").val(data.metaconfig);
                                  }
 
                                  break;
@@ -1343,13 +1371,6 @@
                          args.push({
                              name: mkey + "." + action + ".description",
                              value: $(this).parent().parent().find("#description").val()
-                         });
-                     }
-
-                     if (metaconfig) {
-                         args.push({
-                             name: mkey + "." + action + ".metaconfig",
-                             value: $(this).parent().parent().find("#metaconfig").val()
                          });
                      }
 
@@ -5242,8 +5263,15 @@
                      title: user_info.institute && user_info.institute.metadata.axis_aux3 || 'aux 3',
                      href: 'axis-dim3',
                      description: 1,
-                     metaconfig: 1,
                      key: 'axis_dim3'
+                 });
+            } else if (getUrlSub() == "axis4") {
+
+                 render_axis({
+                     title: user_info.institute && user_info.institute.metadata.axis_aux3 || 'aux 4',
+                     href: 'axis-dim4',
+                     description: 1,
+                     key: 'axis_dim4'
                  });
 
              } else if (getUrlSub() == "indicator") {
@@ -6256,6 +6284,12 @@
                                          value: $("#axis_aux3_id").val()
                                      });
                                  }
+                                 if (user_info.institute.metadata.axis_aux4) {
+                                     args.push({
+                                         name: "indicator.create.axis_dim4_id",
+                                         value: $("#axis_aux4_id").val()
+                                     });
+                                 }
 
                                  if (user_info.user_type == 'user') {
                                      args.push({
@@ -6569,6 +6603,9 @@
                                          if (user_info.institute.metadata.axis_aux3 && data.axis_dim3) {
                                              $(formbuild).find("#axis_aux3_id").val(data.axis_dim3.id);
                                          }
+                                         if (user_info.institute.metadata.axis_aux4 && data.axis_dim4) {
+                                             $(formbuild).find("#axis_aux4_id").val(data.axis_dim4.id);
+                                         }
 
                                          $(formbuild).find("#source").val(data.source);
                                          $(formbuild).find("#tags").val(data.tags);
@@ -6726,6 +6763,12 @@
                                      args.push({
                                          name: "indicator.update.axis_dim3_id",
                                          value: $("#axis_aux3_id").val()
+                                     });
+                                 }
+                                 if (user_info.institute.metadata.axis_aux4) {
+                                     args.push({
+                                         name: "indicator.update.axis_dim4_id",
+                                         value: $("#axis_aux4_id").val()
                                      });
                                  }
 
@@ -10039,6 +10082,9 @@
                                          if (user_info.institute.metadata.axis_aux3 && data.axis_dim3) {
                                              $("#axis_aux3_id").val(data.axis_dim3.id);
                                          }
+                                         if (user_info.institute.metadata.axis_aux4 && data.axis_dim4) {
+                                             $("#axis_aux3_id").val(data.axis_dim4.id);
+                                         }
                                          if (user_info.institute.metadata.best_pratice_reference_city_enabled) {
                                              $("#reference_city").val(data.reference_city);
                                          }
@@ -10203,6 +10249,12 @@
                                  args.push({
                                      name: "best_pratice." + action + ".axis_dim3_id",
                                      value: $("#axis_aux3_id").val()
+                                 });
+                             }
+                             if (user_info.institute.metadata.bp_axis_aux4_enabled &&  user_info.institute.metadata.axis_aux4) {
+                                 args.push({
+                                     name: "best_pratice." + action + ".axis_dim4_id",
+                                     value: $("#axis_aux4_id").val()
                                  });
                              }
 
