@@ -5472,6 +5472,13 @@
                              input: ["select,axis_aux3_id,iselect"]
                          });
                      }
+                     console.log(user_info.institute.metadata.axis_aux4);
+                     if (user_info.institute.metadata.axis_aux4) {
+                         newform.push({
+                             label: user_info.institute.metadata.axis_aux4,
+                             input: ["select,axis_aux4_id,iselect"]
+                         });
+                     }
 
                      if (!(user_info.institute.metadata.hide_indicator_source == 1)) {
                          newform.push({
@@ -9956,6 +9963,14 @@
                              });
                          }
                      }
+                     if (user_info.institute.metadata.bp_axis_aux4_enabled) {
+                         if (user_info.institute.metadata.axis_aux4) {
+                             newform.push({
+                                 label: user_info.institute.metadata.axis_aux4,
+                                 input: ["select,axis_aux4_id,iselect"]
+                             });
+                         }
+                     }
 
 
                      newform.push({
@@ -10083,7 +10098,7 @@
                                              $("#axis_aux3_id").val(data.axis_dim3.id);
                                          }
                                          if (user_info.institute.metadata.axis_aux4 && data.axis_dim4) {
-                                             $("#axis_aux3_id").val(data.axis_dim4.id);
+                                             $("#axis_aux4_id").val(data.axis_dim4.id);
                                          }
                                          if (user_info.institute.metadata.best_pratice_reference_city_enabled) {
                                              $("#reference_city").val(data.reference_city);
