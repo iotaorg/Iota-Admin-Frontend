@@ -225,12 +225,12 @@
                          case 200:
                              user_info = data;
 
-                            // superadmin não tem institute, nao sei se isso é uma feature ou bug ainda
-                             if (!user_info.institute){
-                                user_info.institute = {};
+                             // superadmin não tem institute, nao sei se isso é uma feature ou bug ainda
+                             if (!user_info.institute) {
+                                 user_info.institute = {};
                              }
-                             if (!user_info.institute.metadata){
-                                user_info.institute.metadata = {};
+                             if (!user_info.institute.metadata) {
+                                 user_info.institute.metadata = {};
                              }
 
 
@@ -436,7 +436,7 @@
          submenu_access["superadmin"] = ["countries", "states", "cities", "files_upload", "units", "axis1", "axis2", "axis3", "axis4"];
 
          menu_access["admin"] = ["dashboard", "prefs", "users", "parameters", "content", "variable_user", "indicator", "other", "logs"];
-         submenu_access["admin"] = ["countries", "states", "cities", "files_upload", "files", "best_pratice", "units", "axis", "axis1", "axis2","axis3", "axis4", "css"];
+         submenu_access["admin"] = ["countries", "states", "cities", "files_upload", "files", "best_pratice", "units", "axis", "axis1", "axis2", "axis3", "axis4", "css"];
 
 
          menu_access["admin"].push("logout");
@@ -5265,7 +5265,7 @@
                      description: 1,
                      key: 'axis_dim3'
                  });
-            } else if (getUrlSub() == "axis4") {
+             } else if (getUrlSub() == "axis4") {
 
                  render_axis({
                      title: user_info.institute && user_info.institute.metadata.axis_aux3 || 'aux 4',
@@ -5430,26 +5430,29 @@
                          input: ["select,sort_direction,iselect"]
                      });
 
-                     if (!(user_info.institute.metadata.ods == 1)) {
+                     if (!user_info.institute.metadata.disable_goal_as_ods) {
+                         if (!(user_info.institute.metadata.ods == 1)) {
+                             newform.push({
+                                 label: "Referência de Meta",
+                                 input: ["select,goal_operator,iselect200px", "text,goal,itext200px"]
+                             });
+                             newform.push({
+                                 label: "Fonte (Ref. de Meta)",
+                                 input: ["select,goal_source,iselect source", "text,goal_source_new,itext300px"]
+                             });
+                         } else {
+                             newform.push({
+                                 label: "ODS relacionados",
+                                 input: ["text,goal_source,itext"]
+                             });
+                         }
+
                          newform.push({
-                             label: "Referência de Meta",
-                             input: ["select,goal_operator,iselect200px", "text,goal,itext200px"]
-                         });
-                         newform.push({
-                             label: "Fonte (Ref. de Meta)",
-                             input: ["select,goal_source,iselect source", "text,goal_source_new,itext300px"]
-                         });
-                     } else {
-                         newform.push({
-                             label: "ODS relacionados",
-                             input: ["text,goal_source,itext"]
+                             label: user_info.institute.metadata.ods == 1 ? "Meta ODS" : "Explicação (Ref. de Meta)",
+                             input: ["textarea,goal_explanation,itext"]
                          });
                      }
 
-                     newform.push({
-                         label: user_info.institute.metadata.ods == 1 ? "Meta ODS" : "Explicação (Ref. de Meta)",
-                         input: ["textarea,goal_explanation,itext"]
-                     });
                      newform.push({
                          label: "Eixo",
                          input: ["select,axis_id,iselect"]
@@ -6242,34 +6245,34 @@
                                      value: $(this).parent().parent().find("#formula").val()
                                  }, {
                                      name: "indicator.create.explanation",
-                                     value: $(this).parent().parent().find("#explanation").val()
+                                     value: $(this).parent().parent().find("#explanation").val() || ''
                                  }, {
                                      name: "indicator.create.sort_direction",
-                                     value: $(this).parent().parent().find("#sort_direction option:selected").val()
+                                     value: $(this).parent().parent().find("#sort_direction option:selected").val() || ''
                                  }, {
                                      name: "indicator.create.goal",
                                      value: $.convertNumberToBd($(this).parent().parent().find("#goal").val())
                                  }, {
                                      name: "indicator.create.goal_source",
-                                     value: $(this).parent().parent().find("#goal_source option:selected").val()
+                                     value: $(this).parent().parent().find("#goal_source option:selected").val() || ''
                                  }, {
                                      name: "indicator.create.goal_operator",
                                      value: $(this).parent().parent().find("#goal_operator option:selected").val()
                                  }, {
                                      name: "indicator.create.goal_explanation",
-                                     value: $(this).parent().parent().find("#goal_explanation").val()
+                                     value: $(this).parent().parent().find("#goal_explanation").val() || ''
                                  }, {
                                      name: "indicator.create.axis_id",
-                                     value: $(this).parent().parent().find("#axis_id option:selected").val()
+                                     value: $(this).parent().parent().find("#axis_id option:selected").val() || ''
                                  }, {
                                      name: "indicator.create.source",
-                                     value: $(this).parent().parent().find("#source option:selected").val()
+                                     value: $(this).parent().parent().find("#source option:selected").val() || ''
                                  }, {
                                      name: "indicator.create.tags",
-                                     value: $(this).parent().parent().find("#tags").val()
+                                     value: $(this).parent().parent().find("#tags").val() || ''
                                  }, {
                                      name: "indicator.create.observations",
-                                     value: $(this).parent().parent().find("#observations").val()
+                                     value: $(this).parent().parent().find("#observations").val() || ''
                                  }];
 
                                  if (user_info.institute.metadata.axis_aux1) {
@@ -6716,40 +6719,40 @@
                                      value: $(this).parent().parent().find("#name").val()
                                  }, {
                                      name: "indicator.update.indicator_type",
-                                     value: $(this).parent().parent().find("#indicator_type").val().replace("_dyn", "")
+                                     value: $(this).parent().parent().find("#indicator_type").val().replace("_dyn", "") || ''
                                  }, {
                                      name: "indicator.update.formula",
-                                     value: $(this).parent().parent().find("#formula").val()
+                                     value: $(this).parent().parent().find("#formula").val() || ''
                                  }, {
                                      name: "indicator.update.explanation",
-                                     value: $(this).parent().parent().find("#explanation").val()
+                                     value: $(this).parent().parent().find("#explanation").val() || ''
                                  }, {
                                      name: "indicator.update.sort_direction",
-                                     value: $(this).parent().parent().find("#sort_direction option:selected").val()
+                                     value: $(this).parent().parent().find("#sort_direction option:selected").val() || ''
                                  }, {
                                      name: "indicator.update.goal",
                                      value: $.convertNumberToBd($(this).parent().parent().find("#goal").val())
                                  }, {
                                      name: "indicator.update.goal_source",
-                                     value: $(this).parent().parent().find("#goal_source").val()
+                                     value: $(this).parent().parent().find("#goal_source").val() || ''
                                  }, {
                                      name: "indicator.update.goal_operator",
-                                     value: $(this).parent().parent().find("#goal_operator option:selected").val()
+                                     value: $(this).parent().parent().find("#goal_operator option:selected").val() || ''
                                  }, {
                                      name: "indicator.update.goal_explanation",
-                                     value: $(this).parent().parent().find("#goal_explanation").val()
+                                     value: $(this).parent().parent().find("#goal_explanation").val() || ''
                                  }, {
                                      name: "indicator.update.axis_id",
-                                     value: $(this).parent().parent().find("#axis_id option:selected").val()
+                                     value: $(this).parent().parent().find("#axis_id option:selected").val() || ''
                                  }, {
                                      name: "indicator.update.source",
-                                     value: $(this).parent().parent().find("#source").val()
+                                     value: $(this).parent().parent().find("#source").val() || ''
                                  }, {
                                      name: "indicator.update.tags",
-                                     value: $(this).parent().parent().find("#tags").val()
+                                     value: $(this).parent().parent().find("#tags").val() || ''
                                  }, {
                                      name: "indicator.update.observations",
-                                     value: $(this).parent().parent().find("#observations").val()
+                                     value: $(this).parent().parent().find("#observations").val() || ''
                                  }];
 
 
@@ -10260,13 +10263,13 @@
                                      value: $("#axis_aux2_id").val()
                                  });
                              }
-                             if (user_info.institute.metadata.bp_axis_aux3_enabled &&  user_info.institute.metadata.axis_aux3) {
+                             if (user_info.institute.metadata.bp_axis_aux3_enabled && user_info.institute.metadata.axis_aux3) {
                                  args.push({
                                      name: "best_pratice." + action + ".axis_dim3_id",
                                      value: $("#axis_aux3_id").val()
                                  });
                              }
-                             if (user_info.institute.metadata.bp_axis_aux4_enabled &&  user_info.institute.metadata.axis_aux4) {
+                             if (user_info.institute.metadata.bp_axis_aux4_enabled && user_info.institute.metadata.axis_aux4) {
                                  args.push({
                                      name: "best_pratice." + action + ".axis_dim4_id",
                                      value: $("#axis_aux4_id").val()
