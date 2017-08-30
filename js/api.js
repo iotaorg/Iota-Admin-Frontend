@@ -5475,7 +5475,7 @@
                              input: ["select,axis_aux3_id,iselect"]
                          });
                      }
-                     console.log(user_info.institute.metadata.axis_aux4);
+
                      if (user_info.institute.metadata.axis_aux4) {
                          newform.push({
                              label: user_info.institute.metadata.axis_aux4,
@@ -5483,11 +5483,21 @@
                          });
                      }
 
-                     if (!(user_info.institute.metadata.hide_indicator_source == 1)) {
+                     if (user_info.institute.metadata.indicator_source_as_options) {
+
                          newform.push({
-                             label: "Fonte",
-                             input: ["select,source,iselect source", "text,source_new,itext300px"]
+                             label: "Autor",
+                             input: ["select,source,iselect source"]
                          });
+
+
+                     } else {
+                         if (!(user_info.institute.metadata.hide_indicator_source == 1)) {
+                             newform.push({
+                                 label: "Fonte",
+                                 input: ["select,source,iselect source", "text,source_new,itext300px"]
+                             });
+                         }
                      }
                      newform.push({
                          label: "Tags",
@@ -5512,7 +5522,10 @@
 
 
                          setNewSource($("#dashboard-content .content select#goal_source"), $("#dashboard-content .content input#goal_source_new"));
-                         setNewSource($("#dashboard-content .content select#source"), $("#dashboard-content .content input#source_new"));
+
+                         if (!user_info.institute.metadata.indicator_source_as_options) {
+                             setNewSource($("#dashboard-content .content select#source"), $("#dashboard-content .content input#source_new"));
+                         }
 
                      }
 
@@ -5535,7 +5548,18 @@
                      loadSources();
 
                      loadComboSources(sources, $("#dashboard-content .content select#goal_source"), $("#dashboard-content .content input#goal_source_new"));
-                     loadComboSources(sources, $("#dashboard-content .content select#source"), $("#dashboard-content .content input#source_new"));
+
+                     if (!user_info.institute.metadata.indicator_source_as_options) {
+                         loadComboSources(sources, $("#dashboard-content .content select#source"), $("#dashboard-content .content input#source_new"));
+                     } else {
+
+                         $("#source").append($("<option></option>").val('').html('Nenhum'));
+
+                         $.each(user_info.institute.metadata.indicator_source_as_options, function(index, item) {
+                             $("#source").append($("<option></option>").val(item[0]).html(item[1]));
+                         });
+
+                     }
 
                      $.ajax({
                          async: false,
