@@ -5553,6 +5553,7 @@
                          loadComboSources(sources, $("#dashboard-content .content select#source"), $("#dashboard-content .content input#source_new"));
                      } else {
 
+                        $("#source").prop('multiple', true);
                          $("#source").append($("<option></option>").val('').html('Nenhum'));
 
                          $.each(user_info.institute.metadata.indicator_source_as_options, function(index, item) {
