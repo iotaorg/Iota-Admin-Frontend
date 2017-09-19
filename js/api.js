@@ -5554,7 +5554,7 @@
                      } else {
 
                         $("#source").prop('multiple', true);
-                         $("#source").append($("<option></option>").val('').html('Nenhum'));
+                         // $("#source").append($("<option></option>").val('').html('Nenhum'));
 
                          $.each(user_info.institute.metadata.indicator_source_as_options, function(index, item) {
                              $("#source").append($("<option></option>").val(item[0]).html(item[1]));
