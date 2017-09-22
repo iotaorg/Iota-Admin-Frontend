@@ -3766,6 +3766,19 @@
                          label: "Período",
                          input: ["select,period,iselect"]
                      });
+                     newform.push({
+                         label: "Imagem",
+                         input: ["file,imagem_variavel,itext"]
+                     });
+                     newform.push({
+                         label: "Nome curto",
+                         input: ["text,short_name,itext"]
+                     });
+                     newform.push({
+                         label: "Ordem",
+                         input: ["text,display_order,itext"]
+                     });
+
 
                      if (!(user_info.institute.metadata.hide_variable_source == 1)) {
 
@@ -3836,6 +3849,9 @@
                                          $(formbuild).find("select#type").val(data.type);
                                          if (data.measurement_unit) {
                                              $(formbuild).find("select#measurement_unit").val(data.measurement_unit.id);
+                                         }
+                                         if (data.image_user_file) {
+                                             $("input#arquivo_imagem_variavel").after("<br /><img src='" + data.image_user_file.public_url + "' border='0' style='max-height: 240px' class='imagem_preview'>");
                                          }
                                          $(formbuild).find("select#period").val(data.period);
 
@@ -10168,12 +10184,12 @@
                              label: "Cidade Referência",
                              input: ["text,reference_city,itext"]
                          });
-
-                         newform.push({
-                             label: "Imagem",
-                             input: ["file,imagem_bp,itext"]
-                         });
                      }
+
+                     newform.push({
+                         label: "Imagem",
+                         input: ["file,imagem_bp,itext"]
+                     });
 
                      newform.push({
                          label: "Descrição",
