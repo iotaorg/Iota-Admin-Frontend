@@ -5,6 +5,7 @@
      var original_id = "",
          cont_files_sent = 0,
          files_sent = [],
+         files_sent_response = [],
          sendFiles = function(sendForm, clickedButton) {
              if (cont_files_sent < files_sent.length) {
                  var file = files_sent[cont_files_sent];
@@ -36,10 +37,11 @@
 
                  $("#iframe_" + file).load(function() {
 
-                     var erro = 0;
+                     var erro = 0,
+                         retorno;
                      if ($(this).contents()) {
                          if ($(this).contents().find('pre')) {
-                             var retorno = $(this).contents().text();
+                             retorno = $(this).contents().text();
 
                              if (/^{/.test(retorno)) {
                                  retorno = $.parseJSON(retorno);
@@ -58,11 +60,15 @@
 
                      if (erro == 0) {
                          if (!retorno.error) {
+                             files_sent_response[file] = retorno;
+
                              if (cont_files_sent < files_sent.length) {
-                                 sendFiles(sendForm);
+                                 sendFiles(sendForm, clickedButton);
+                                 $(clickedButton).html("Enviando arquivo... " + cont_files_sent + ' / ' + files_sent.length);
                              } else {
                                  $(clickedButton).html("Enviando Dados do Formulário...");
                                  sendForm();
+                                 files_sent_response = [];
                              }
                          } else {
                              $(".form-aviso").setWarning({
@@ -179,9 +185,9 @@
      $(window).hashchange(function() {
          $("#dashboard-content .content").empty();
 
-         if (!do_not_use_lex){
-            load_trad();
-        }
+         if (!do_not_use_lex) {
+             load_trad();
+         }
 
          buildUserInterface();
      })
@@ -10124,6 +10130,11 @@
                              label: "Cidade Referência",
                              input: ["text,reference_city,itext"]
                          });
+
+                         newform.push({
+                             label: "Imagem",
+                             input: ["file,imagem_bp,itext"]
+                         });
                      }
 
                      newform.push({
@@ -10245,6 +10256,10 @@
                                              $("#reference_city").val(data.reference_city);
                                          }
 
+                                         if (data.thumbnail_user_file) {
+                                             $("input#arquivo_imagem_bp").after("<br /><img src='" + data.thumbnail_user_file.public_url + "' border='0' class='imagem_preview'>");
+                                         }
+
                                          break;
                                  }
                              },
@@ -10319,7 +10334,10 @@
                      default_params.bodyid = 'editorFontes';
                      var editorFontes = new TINY.editor.edit('editorFontes', default_params);
 
-                     $("#dashboard-content .content .botao-form[ref='enviar']").click(function() {
+                     var clickedButton = $("#dashboard-content .content .botao-form[ref='enviar']");
+                     clickedButton.click(function() {
+                         if (clickedButton.attr("is-disabled") == 1) return false;
+
                          resetWarnings();
                          if ($(this).parent().parent().find("#institute_id option:selected").val() == "") {
                              $(".form-aviso").setWarning({
@@ -10337,113 +10355,153 @@
                                  var url_action = $.getUrlVar("url");
                              }
 
-                             editorDescricao.post();
-                             editorObjetivos.post();
-                             editorCronograma.post();
-                             editorResultados.post();
-                             editorInstituicoes.post();
-                             editorContatos.post();
-                             editorFontes.post();
+                             var sendForm = function() {
 
-                             args = [{
-                                 name: "api_key",
-                                 value: $.cookie("key")
-                             }, {
-                                 name: "best_pratice." + action + ".name",
-                                 value: $(this).parent().parent().find("#name").val()
-                             }, {
-                                 name: "best_pratice." + action + ".description",
-                                 value: $(this).parent().parent().find("#description").val()
-                             }, {
-                                 name: "best_pratice." + action + ".goals",
-                                 value: $(this).parent().parent().find("#goals").val()
-                             }, {
-                                 name: "best_pratice." + action + ".schedule",
-                                 value: $(this).parent().parent().find("#schedule").val()
-                             }, {
-                                 name: "best_pratice." + action + ".results",
-                                 value: $(this).parent().parent().find("#results").val()
-                             }, {
-                                 name: "best_pratice." + action + ".institutions_involved",
-                                 value: $(this).parent().parent().find("#institutions_involved").val()
-                             }, {
-                                 name: "best_pratice." + action + ".contatcts",
-                                 value: $(this).parent().parent().find("#contacts").val()
-                             }, {
-                                 name: "best_pratice." + action + ".sources",
-                                 value: $(this).parent().parent().find("#sources").val()
-                             }, {
-                                 name: "best_pratice." + action + ".tags",
-                                 value: $(this).parent().parent().find("#tags").val()
-                             }, {
-                                 name: "best_pratice." + action + ".axis_id",
-                                 value: $(this).parent().parent().find("#axis_id option:selected").val()
-                             }];
+                                 editorDescricao.post();
+                                 editorObjetivos.post();
+                                 editorCronograma.post();
+                                 editorResultados.post();
+                                 editorInstituicoes.post();
+                                 editorContatos.post();
+                                 editorFontes.post();
 
-                             if (user_info.institute.metadata.best_pratice_reference_city_enabled) {
-                                 args.push({
-                                     name: "best_pratice." + action + ".reference_city",
-                                     value: $("#reference_city").val()
-                                 });
-                             }
+                                 args = [{
+                                     name: "api_key",
+                                     value: $.cookie("key")
+                                 }, {
+                                     name: "best_pratice." + action + ".name",
+                                     value: $("#name").val()
+                                 }, {
+                                     name: "best_pratice." + action + ".description",
+                                     value: $("#description").val()
+                                 }, {
+                                     name: "best_pratice." + action + ".goals",
+                                     value: $("#goals").val()
+                                 }, {
+                                     name: "best_pratice." + action + ".schedule",
+                                     value: $("#schedule").val()
+                                 }, {
+                                     name: "best_pratice." + action + ".results",
+                                     value: $("#results").val()
+                                 }, {
+                                     name: "best_pratice." + action + ".institutions_involved",
+                                     value: $("#institutions_involved").val()
+                                 }, {
+                                     name: "best_pratice." + action + ".contatcts",
+                                     value: $("#contacts").val()
+                                 }, {
+                                     name: "best_pratice." + action + ".sources",
+                                     value: $("#sources").val()
+                                 }, {
+                                     name: "best_pratice." + action + ".tags",
+                                     value: $("#tags").val()
+                                 }, {
+                                     name: "best_pratice." + action + ".axis_id",
+                                     value: $("#axis_id option:selected").val()
+                                 }];
 
-
-                             if (user_info.institute.metadata.bp_axis_aux1_enabled && user_info.institute.metadata.axis_aux1) {
-                                 args.push({
-                                     name: "best_pratice." + action + ".axis_dim1_id",
-                                     value: $("#axis_aux1_id").val()
-                                 });
-                             }
-
-                             if (user_info.institute.metadata.bp_axis_aux2_enabled && user_info.institute.metadata.axis_aux2) {
-                                 args.push({
-                                     name: "best_pratice." + action + ".axis_dim2_id",
-                                     value: $("#axis_aux2_id").val()
-                                 });
-                             }
-                             if (user_info.institute.metadata.bp_axis_aux3_enabled && user_info.institute.metadata.axis_aux3) {
-                                 args.push({
-                                     name: "best_pratice." + action + ".axis_dim3_id",
-                                     value: $("#axis_aux3_id").val()
-                                 });
-                             }
-                             if (user_info.institute.metadata.bp_axis_aux4_enabled && user_info.institute.metadata.axis_aux4) {
-                                 args.push({
-                                     name: "best_pratice." + action + ".axis_dim4_id",
-                                     value: $("#axis_aux4_id").val()
-                                 });
-                             }
-
-                             $("#dashboard-content .content .botao-form[ref='enviar']").hide();
-                             $.ajax({
-                                 type: method,
-                                 dataType: 'json',
-                                 url: url_action,
-                                 data: args,
-                                 success: function(data, status, jqXHR) {
-                                     $("#aviso").setWarning({
-                                         msg: "Operação efetuada com sucesso.".render2({
-                                             codigo: jqXHR.status
-                                         })
+                                 if (user_info.institute.metadata.best_pratice_reference_city_enabled) {
+                                     args.push({
+                                         name: "best_pratice." + action + ".reference_city",
+                                         value: $("#reference_city").val()
                                      });
-                                     location.hash = "#!/" + getUrlSub();
-                                 },
-                                 error: function(data) {
-                                     switch (data.status) {
-                                         case 400:
-                                             $("#aviso").setWarning({
-                                                 msg: "Erro ao $$operacao. ($$codigo)".render2({
-                                                     operacao: txtOption,
-                                                     codigo: $.trataErro(data)
-                                                 })
-                                             });
-                                             break;
-                                     }
-                                     $("#dashboard-content .content .botao-form[ref='enviar']").show();
                                  }
-                             });
+
+
+                                 if (user_info.institute.metadata.bp_axis_aux1_enabled && user_info.institute.metadata.axis_aux1) {
+                                     args.push({
+                                         name: "best_pratice." + action + ".axis_dim1_id",
+                                         value: $("#axis_aux1_id").val()
+                                     });
+                                 }
+
+                                 if (user_info.institute.metadata.bp_axis_aux2_enabled && user_info.institute.metadata.axis_aux2) {
+                                     args.push({
+                                         name: "best_pratice." + action + ".axis_dim2_id",
+                                         value: $("#axis_aux2_id").val()
+                                     });
+                                 }
+                                 if (user_info.institute.metadata.bp_axis_aux3_enabled && user_info.institute.metadata.axis_aux3) {
+                                     args.push({
+                                         name: "best_pratice." + action + ".axis_dim3_id",
+                                         value: $("#axis_aux3_id").val()
+                                     });
+                                 }
+                                 if (user_info.institute.metadata.bp_axis_aux4_enabled && user_info.institute.metadata.axis_aux4) {
+                                     args.push({
+                                         name: "best_pratice." + action + ".axis_dim4_id",
+                                         value: $("#axis_aux4_id").val()
+                                     });
+                                 }
+
+
+                                 if (files_sent_response['imagem_bp']) {
+                                     args.push({
+                                         name: "best_pratice." + action + ".image_user_file_id",
+                                         value: files_sent_response['imagem_bp']['id']
+                                     });
+                                     args.push({
+                                         name: "best_pratice." + action + ".thumbnail_user_file_id",
+                                         value: files_sent_response['imagem_bp']['thumb']['id']
+                                     });
+                                 }
+
+                                 $("#dashboard-content .content .botao-form[ref='enviar']").hide();
+                                 $.ajax({
+                                     type: method,
+                                     dataType: 'json',
+                                     url: url_action,
+                                     data: args,
+                                     success: function(data, status, jqXHR) {
+                                         $("#aviso").setWarning({
+                                             msg: "Operação efetuada com sucesso.".render2({
+                                                 codigo: jqXHR.status
+                                             })
+                                         });
+                                         location.hash = "#!/" + getUrlSub();
+                                     },
+                                     error: function(data) {
+                                         switch (data.status) {
+                                             case 400:
+                                                 $("#aviso").setWarning({
+                                                     msg: "Erro ao $$operacao. ($$codigo)".render2({
+                                                         operacao: txtOption,
+                                                         codigo: $.trataErro(data)
+                                                     })
+                                                 });
+                                                 break;
+                                         }
+                                         clickedButton.attr("is-disabled", 0);
+                                         $(clickedButton).html("Enviar");
+                                         $("#dashboard-content .content .botao-form[ref='enviar']").show();
+                                     }
+                                 });
+                             };
+
+                             var files = ["imagem_bp"];
+
+                             files_sent = [];
+                             for (i = 0; i < files.length; i++) {
+                                 if ($(".form #arquivo_" + files[i]).val() != undefined) {
+                                     if ($(".form #arquivo_" + files[i]).val() != "") {
+                                         files_sent.push(files[i]);
+                                     }
+                                 }
+                             }
+                             cont_files_sent = 0;
+
+                             $(clickedButton).html("Salvando...");
+                             $(clickedButton).attr("is-disabled", 1);
+
+                             if (files_sent.length > 0)
+                                 $(clickedButton).html("Enviando Arquivos...");
+
+                             sendFiles(sendForm, clickedButton);
+
+
                          }
                      });
+
                      $("#dashboard-content .content .botao-form[ref='cancelar']").click(function() {
                          resetWarnings();
                          history.back();
