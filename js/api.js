@@ -10369,10 +10369,13 @@
                      $("#dashboard-content .content").append(userList);
                      $('#button-add').remove();
 
-                     var dt = $("#results").dataTable({
+                     $("#results").dataTable({
                          iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
                          "bProcessing": true,
+                         "aaSorting": [
+                             [1, 'desc']
+                         ],
                          "sAjaxSource": api_path + '/api/file?api_key=$$key&hide_listing=0&content-type=application/json&lang=$$lang&columns=status_text,created_at'.render2({
                              user: $.cookie("user.id"),
                              lang: cur_lang,
@@ -10387,8 +10390,6 @@
                              "aTargets": [1]
                          }]
                      });
-
-                     dt.fnSort( [ [1,'desc'] ] );
 
                  }
              } else if (getUrlSub() == "files") {
@@ -11992,10 +11993,10 @@
                              "aTargets": [2]
                          }, {
                              "fnRender": function(oObj, sVal) {
-                                 return $.format.date(sVal.replace("T", " "), "dd/MM/yyyy HH:mm:ss");
+                                 return sVal.replace("T", " ");
                              },
                              "aTargets": [2]
-                         }]
+                         } ]
                      });
 
              } else if (getUrlSub() == "logout") {
