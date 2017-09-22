@@ -540,7 +540,7 @@
          submenu_access["superadmin"] = ["countries", "states", "cities", "files_upload", "units", "axis1", "axis2", "axis3", "axis4"];
 
          menu_access["admin"] = ["dashboard", "prefs", "users", "parameters", "content", "variable_user", "indicator", "other", "logs"];
-         submenu_access["admin"] = ["countries", "states", "cities", "files_upload", "files", "best_pratice", "units", "axis", "axis1", "axis2", "axis3", "axis4", "css"];
+         submenu_access["admin"] = ["countries", "states", "cities", "files_upload", "files", "best_pratice", "units", "axis", "axis1", "axis2", "axis3", "axis4", "css", "pages", "menus"];
 
 
          menu_access["admin"].push("logout");
