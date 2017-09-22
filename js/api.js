@@ -9881,8 +9881,8 @@
                          input: ["text,title,itext"]
                      });
                      newform.push({
-                         label: "Url",
-                         input: ["text,title_url,itext"]
+                         label: "Imagem",
+                         input: ["file,imagem_pagina,itext"]
                      });
                      newform.push({
                          label: "Conteúdo",
@@ -9910,7 +9910,6 @@
                                  switch (jqXHR.status) {
                                      case 200:
                                          $(formbuild).find("input#title").val(data.title);
-                                         $(formbuild).find("input#title_url").val(data.title_url);
                                          $(formbuild).find("textarea#page_content").val(data.content);
                                          break;
                                  }
@@ -9958,7 +9957,10 @@
                          }
                      });
 
-                     $("#dashboard-content .content .botao-form[ref='enviar']").click(function() {
+                    var clickedButton = $("#dashboard-content .content .botao-form[ref='enviar']");
+                    clickedButton.click(function() {
+                         if (clickedButton.attr("is-disabled") == 1) return false;
+
                          resetWarnings();
                          if ($(this).parent().parent().find("#institute_id option:selected").val() == "") {
                              $(".form-aviso").setWarning({
@@ -9966,59 +9968,90 @@
                              });
                          } else {
 
-                             if ($.getUrlVar("option") == "add") {
-                                 var action = "create";
-                                 var method = "POST";
-                                 var url_action = api_path + "/api/page";
-                             } else {
-                                 var action = "update";
-                                 var method = "POST";
-                                 var url_action = $.getUrlVar("url");
-                             }
+                            var sendForm = function() {
 
-                             editor.post();
-
-                             args = [{
-                                 name: "api_key",
-                                 value: $.cookie("key")
-                             }, {
-                                 name: "page." + action + ".title",
-                                 value: $(this).parent().parent().find("#title").val()
-                             }, {
-                                 name: "page." + action + ".title_url",
-                                 value: $(this).parent().parent().find("#title_url").val()
-                             }, {
-                                 name: "page." + action + ".content",
-                                 value: $(this).parent().parent().find("#page_content").val()
-                             }];
-                             $("#dashboard-content .content .botao-form[ref='enviar']").hide();
-                             $.ajax({
-                                 type: method,
-                                 dataType: 'json',
-                                 url: url_action,
-                                 data: args,
-                                 success: function(data, status, jqXHR) {
-                                     $("#aviso").setWarning({
-                                         msg: "Operação efetuada com sucesso.".render2({
-                                             codigo: jqXHR.status
-                                         })
-                                     });
-                                     location.hash = "#!/" + getUrlSub();
-                                 },
-                                 error: function(data) {
-                                     switch (data.status) {
-                                         case 400:
-                                             $("#aviso").setWarning({
-                                                 msg: "Erro ao $$operacao. ($$codigo)".render2({
-                                                     operacao: txtOption,
-                                                     codigo: $.trataErro(data)
-                                                 })
-                                             });
-                                             break;
-                                     }
-                                     $("#dashboard-content .content .botao-form[ref='enviar']").show();
+                                 if ($.getUrlVar("option") == "add") {
+                                     var action = "create";
+                                     var method = "POST";
+                                     var url_action = api_path + "/api/page";
+                                 } else {
+                                     var action = "update";
+                                     var method = "POST";
+                                     var url_action = $.getUrlVar("url");
                                  }
-                             });
+
+                                 editor.post();
+
+                                 args = [{
+                                     name: "api_key",
+                                     value: $.cookie("key")
+                                 }, {
+                                     name: "page." + action + ".title",
+                                     value: $("#title").val()
+                                 }, {
+                                     name: "page." + action + ".content",
+                                     value: $("#page_content").val()
+                                 }];
+
+                                 if (files_sent_response['imagem_pagina']) {
+                                     args.push({
+                                         name: "page." + action + ".image_user_file_id",
+                                         value: files_sent_response['imagem_pagina']['id']
+                                     });
+
+                                 }
+
+                                 $("#dashboard-content .content .botao-form[ref='enviar']").hide();
+                                 $.ajax({
+                                     type: method,
+                                     dataType: 'json',
+                                     url: url_action,
+                                     data: args,
+                                     success: function(data, status, jqXHR) {
+                                         $("#aviso").setWarning({
+                                             msg: "Operação efetuada com sucesso.".render2({
+                                                 codigo: jqXHR.status
+                                             })
+                                         });
+                                         location.hash = "#!/" + getUrlSub();
+                                     },
+                                     error: function(data) {
+                                         switch (data.status) {
+                                             case 400:
+                                                 $("#aviso").setWarning({
+                                                     msg: "Erro ao $$operacao. ($$codigo)".render2({
+                                                         operacao: txtOption,
+                                                         codigo: $.trataErro(data)
+                                                     })
+                                                 });
+                                                 break;
+                                         }
+                                         $(clickedButton).attr("is-disabled", 0);
+                                         $(clickedButton).html("Enviar");
+
+                                     }
+                                 });
+                            };
+                            var files = ["imagem_pagina"];
+
+                             files_sent = [];
+                             for (i = 0; i < files.length; i++) {
+                                 if ($(".form #arquivo_" + files[i]).val() != undefined) {
+                                     if ($(".form #arquivo_" + files[i]).val() != "") {
+                                         files_sent.push(files[i]);
+                                     }
+                                 }
+                             }
+                             cont_files_sent = 0;
+
+                             $(clickedButton).html("Salvando...");
+                             $(clickedButton).attr("is-disabled", 1);
+
+                             if (files_sent.length > 0)
+                                 $(clickedButton).html("Enviando Arquivos...");
+
+                             sendFiles(sendForm, clickedButton);
+
                          }
                      });
                      $("#dashboard-content .content .botao-form[ref='cancelar']").click(function() {
