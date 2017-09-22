@@ -9911,6 +9911,11 @@
                                      case 200:
                                          $(formbuild).find("input#title").val(data.title);
                                          $(formbuild).find("textarea#page_content").val(data.content);
+
+                                         if (data.image_user_file) {
+                                             $("input#arquivo_imagem_pagina").after("<br /><img src='" + data.image_user_file.public_url + "' border='0' style='max-height: 240px' class='imagem_preview'>");
+                                         }
+
                                          break;
                                  }
                              },
