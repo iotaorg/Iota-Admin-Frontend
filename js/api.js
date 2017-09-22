@@ -2,6 +2,102 @@
  var SUPER_CACHE_data_region, SUPER_CACHE_data_variables;
  $(document).ready(function() {
 
+     var original_id = "",
+         cont_files_sent = 0,
+         files_sent = [],
+         sendFiles = function(sendForm, clickedButton) {
+             if (cont_files_sent < files_sent.length) {
+                 var file = files_sent[cont_files_sent];
+                 var form = $("#formFileUpload_" + file);
+
+                 original_id = $('#arquivo_' + file).attr("original-id");
+
+                 $('#arquivo_' + file).attr({
+                     name: "arquivo",
+                     id: "arquivo"
+                 });
+
+                 form.attr("action", api_path + '/api/user/$$userid/arquivo/$$tipo?api_key=$$key&content-type=application/json'.render2({
+                     userid: $.cookie("user.id"),
+                     tipo: file,
+                     key: $.cookie("key")
+                 }));
+                 form.attr("method", "post");
+                 form.attr("enctype", "multipart/form-data");
+                 form.attr("encoding", "multipart/form-data");
+                 form.attr("target", "iframe_" + file);
+                 form.attr("file", $('#arquivo').val());
+                 cont_files_sent++;
+                 form.submit();
+                 $('#arquivo').attr({
+                     name: original_id,
+                     id: original_id
+                 });
+
+                 $("#iframe_" + file).load(function() {
+
+                     var erro = 0;
+                     if ($(this).contents()) {
+                         if ($(this).contents().find('pre')) {
+                             var retorno = $(this).contents().text();
+
+                             if (/^{/.test(retorno)) {
+                                 retorno = $.parseJSON(retorno);
+                             } else {
+                                 retorno = {
+                                     error: retorno
+                                 }
+                             }
+
+                         } else {
+                             erro = 1;
+                         }
+                     } else {
+                         erro = 1;
+                     }
+
+                     if (erro == 0) {
+                         if (!retorno.error) {
+                             if (cont_files_sent < files_sent.length) {
+                                 sendFiles(sendForm);
+                             } else {
+                                 $(clickedButton).html("Enviando Dados do Formulário...");
+                                 sendForm();
+                             }
+                         } else {
+                             $(".form-aviso").setWarning({
+                                 msg: "$$aa ".render({
+                                     aa: 'Erro ao enviar arquivo'
+                                 }) + file + " (" + retorno.error + ")"
+                             });
+                             $(clickedButton).html("$$save".render({
+                                 save: 'Salvar'
+                             }));
+                             $(clickedButton).attr("is-disabled", 0);
+                             cont_files_sent = files_sent.length;
+                             return;
+                         }
+                     } else {
+
+
+                         $(".form-aviso").setWarning({
+                             msg: "$$aa ".render({
+                                 aa: 'Erro ao enviar arquivo'
+                             }) + file
+                         });
+                         $(clickedButton).html("$$save".render({
+                             save: 'Salvar'
+                         }));
+                         $(clickedButton).attr("is-disabled", 0);
+                         cont_files_sent = files_sent.length;
+                         return;
+                     }
+                 });
+             } else {
+                 sendForm()
+             }
+         }
+
      if (do_not_use_lex == false) {
          $('.top-left').append('<div style="float: left; margin-left: 5em"><a href="#" data-href="pt-br" title="português" style="padding-bottom: 1px;border-bottom: 2px solid $$pt;display: inline-block;"><img src="/frontend/images/br.png"> </a><a data-href="es" title="espanhol" style="border-bottom: 2px solid $$es;margin-left:4px;display: inline-block;padding-bottom: 1px;" href="#" ><img src="/frontend/images/es.png"> </a> </div>'.render2({
              es: cur_lang == 'es' ? 'gray' : 'white',
@@ -83,7 +179,9 @@
      $(window).hashchange(function() {
          $("#dashboard-content .content").empty();
 
-         load_trad();
+         if (!do_not_use_lex){
+            load_trad();
+        }
 
          buildUserInterface();
      })
@@ -10385,7 +10483,7 @@
                              "sWidth": "160px",
                              "bSearchable": false,
                              "fnRender": function(oObj, sVal) {
-                                 return '<span style="display:none;">'+sVal + '</span>' + $.format.date(sVal, "dd/MM/yyyy hh:mm");
+                                 return '<span style="display:none;">' + sVal + '</span>' + $.format.date(sVal, "dd/MM/yyyy hh:mm");
                              },
                              "aTargets": [1]
                          }]
@@ -11848,96 +11946,9 @@
                              });
                          }
 
-                         var original_id = "";
-
-                         var sendFiles = function() {
-                             if (cont_files_sent < files_sent.length) {
-                                 var file = files_sent[cont_files_sent];
-                                 var form = $("#formFileUpload_" + file);
-
-                                 original_id = $('#arquivo_' + file).attr("original-id");
-
-                                 $('#arquivo_' + file).attr({
-                                     name: "arquivo",
-                                     id: "arquivo"
-                                 });
-
-                                 form.attr("action", api_path + '/api/user/$$userid/arquivo/$$tipo?api_key=$$key&content-type=application/json'.render2({
-                                     userid: $.cookie("user.id"),
-                                     tipo: file,
-                                     key: $.cookie("key")
-                                 }));
-                                 form.attr("method", "post");
-                                 form.attr("enctype", "multipart/form-data");
-                                 form.attr("encoding", "multipart/form-data");
-                                 form.attr("target", "iframe_" + file);
-                                 form.attr("file", $('#arquivo').val());
-                                 cont_files_sent++;
-                                 form.submit();
-                                 $('#arquivo').attr({
-                                     name: original_id,
-                                     id: original_id
-                                 });
-
-                                 $("#iframe_" + file).load(function() {
-
-                                     var erro = 0;
-                                     if ($(this).contents()) {
-                                         if ($(this).contents().find('pre')) {
-                                             var retorno = $(this).contents().find('pre').text();
-                                             retorno = $.parseJSON(retorno);
-                                         } else {
-                                             erro = 1;
-                                         }
-                                     } else {
-                                         erro = 1;
-                                     }
-
-                                     if (erro == 0) {
-                                         if (!retorno.error) {
-                                             if (cont_files_sent < files_sent.length) {
-                                                 sendFiles();
-                                             } else {
-                                                 $(clickedButton).html("Enviando Dados do Formulário...");
-                                                 sendForm();
-                                             }
-                                         } else {
-                                             $(".form-aviso").setWarning({
-                                                 msg: "$$aa ".render({
-                                                     aa: 'Erro ao enviar arquivo'
-                                                 }) + file + " (" + retorno.error + ")"
-                                             });
-                                             $(clickedButton).html("$$save".render({
-                                                 save: 'Salvar'
-                                             }));
-                                             $(clickedButton).attr("is-disabled", 0);
-                                             cont_files_sent = files_sent.length;
-                                             return;
-                                         }
-                                     } else {
-
-
-                                         $(".form-aviso").setWarning({
-                                             msg: "$$aa ".render({
-                                                 aa: 'Erro ao enviar arquivo'
-                                             }) + file
-                                         });
-                                         $(clickedButton).html("$$save".render({
-                                             save: 'Salvar'
-                                         }));
-                                         $(clickedButton).attr("is-disabled", 0);
-                                         cont_files_sent = files_sent.length;
-                                         return;
-                                     }
-                                 });
-                             } else {
-                                 sendForm()
-                             }
-                         }
-
                          var files = ["programa_metas", "carta_compromisso", "logo_movimento", "prestacao_de_co", 'arq_lei', "imagem_cidade"];
 
-                         var files_sent = [];
+                         files_sent = [];
                          for (i = 0; i < files.length; i++) {
                              if ($(".form #arquivo_" + files[i]).val() != undefined) {
                                  if ($(".form #arquivo_" + files[i]).val() != "") {
@@ -11945,14 +11956,15 @@
                                  }
                              }
                          }
-
-                         var cont_files_sent = 0;
+                         cont_files_sent = 0;
 
                          $(clickedButton).html("Salvando...");
                          $(clickedButton).attr("is-disabled", 1);
 
-                         $(clickedButton).html("Enviando Arquivos...");
-                         sendFiles();
+                         if (files_sent.length > 0)
+                             $(clickedButton).html("Enviando Arquivos...");
+
+                         sendFiles(sendForm, clickedButton);
                      }
                  });
                  $("#dashboard-content .content .botao-form[ref='cancelar']").click(function() {
@@ -11996,7 +12008,7 @@
                                  return sVal.replace("T", " ");
                              },
                              "aTargets": [2]
-                         } ]
+                         }]
                      });
 
              } else if (getUrlSub() == "logout") {
