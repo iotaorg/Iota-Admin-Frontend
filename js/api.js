@@ -4656,7 +4656,13 @@
                                      if ($(this).contents()[0].body.outerHTML) {
                                          var retorno = $(this).contents()[0].body.outerHTML;
                                          retorno = $(retorno).text();
-                                         retorno = $.parseJSON(retorno);
+                                         if (/^{/.test(retorno)) {
+                                             retorno = $.parseJSON(retorno);
+                                         } else {
+                                             retorno = {
+                                                 error: retorno
+                                             }
+                                         }
                                      } else {
                                          erro = 1;
                                      }
@@ -5553,7 +5559,7 @@
                          loadComboSources(sources, $("#dashboard-content .content select#source"), $("#dashboard-content .content input#source_new"));
                      } else {
 
-                        $("#source").prop('multiple', true);
+                         $("#source").prop('multiple', true);
                          // $("#source").append($("<option></option>").val('').html('Nenhum'));
 
                          $.each(user_info.institute.metadata.indicator_source_as_options, function(index, item) {
@@ -9404,14 +9410,21 @@
                          });
 
                          $("#iframe_" + file).load(function() {
-
                              var erro = 0;
+
                              if ($(this).contents()) {
                                  if ($(this).contents()[0].body) {
                                      if ($(this).contents()[0].body.outerHTML) {
                                          var retorno = $(this).contents()[0].body.outerHTML;
                                          retorno = $(retorno).text();
-                                         retorno = $.parseJSON(retorno);
+
+                                         if (/^{/.test(retorno)) {
+                                             retorno = $.parseJSON(retorno);
+                                         } else {
+                                             retorno = {
+                                                 error: retorno
+                                             }
+                                         }
                                      } else {
                                          erro = 1;
                                      }
@@ -9439,13 +9452,15 @@
                                  }
                              } else {
 
-                                 $(".value_via_file .form-aviso").setWarning({
-                                     msg: "Erro ao enviar arquivo"
+                                 $(".upload_css .form-aviso").setWarning({
+                                     msg: "Erro ao enviar arquivo: " + $(retorno).text()
                                  });
                                  $(clickedButton).html("Enviar");
                                  $(clickedButton).attr("is-disabled", 0);
                                  return;
+
                              }
+
                          });
                      });
                  }
@@ -10601,7 +10616,14 @@
                                              if ($(this).contents()[0].body.outerHTML) {
                                                  var retorno = $(this).contents()[0].body.outerHTML;
                                                  retorno = $(retorno).text();
-                                                 retorno = $.parseJSON(retorno);
+
+                                                 if (/^{/.test(retorno)) {
+                                                     retorno = $.parseJSON(retorno);
+                                                 } else {
+                                                     retorno = {
+                                                         error: retorno
+                                                     }
+                                                 }
                                              } else {
                                                  erro = 1;
                                              }
@@ -10630,7 +10652,7 @@
                                          }
                                      } else {
 
-                                         $(".value_via_file .form-aviso").setWarning({
+                                         $(".upload_file .form-aviso").setWarning({
                                              msg: "Erro ao enviar arquivo"
                                          });
                                          $(clickedButton).html("Enviar");
@@ -11327,7 +11349,13 @@
                                                  if ($(this).contents()[0].body.outerHTML) {
                                                      var retorno = $(this).contents()[0].body.outerHTML;
                                                      retorno = $(retorno).text();
-                                                     retorno = $.parseJSON(retorno);
+                                                     if (/^{/.test(retorno)) {
+                                                         retorno = $.parseJSON(retorno);
+                                                     } else {
+                                                         retorno = {
+                                                             error: retorno
+                                                         }
+                                                     }
                                                  } else {
                                                      erro = 1;
                                                  }
