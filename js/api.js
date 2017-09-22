@@ -10369,7 +10369,7 @@
                      $("#dashboard-content .content").append(userList);
                      $('#button-add').remove();
 
-                     $("#results").dataTable({
+                     var dt = $("#results").dataTable({
                          iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
                          "bProcessing": true,
@@ -10379,12 +10379,16 @@
                              key: $.cookie("key")
                          }),
                          "aoColumnDefs": [{
+                             "sWidth": "160px",
+                             "bSearchable": false,
                              "fnRender": function(oObj, sVal) {
-                                 return $.format.date(sVal, "dd/MM/yyyy hh:mm");
+                                 return '<span style="display:none;">'+sVal + '</span>' + $.format.date(sVal, "dd/MM/yyyy hh:mm");
                              },
                              "aTargets": [1]
                          }]
                      });
+
+                     dt.fnSort( [ [1,'desc'] ] );
 
                  }
              } else if (getUrlSub() == "files") {
