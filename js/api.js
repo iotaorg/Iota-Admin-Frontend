@@ -3843,32 +3843,34 @@
                              success: function(data, status, jqXHR) {
                                  switch (jqXHR.status) {
                                      case 200:
-                                         $(formbuild).find("input#name").val(data.name);
-                                         $(formbuild).find("input#cognomen").val(data.cognomen);
-                                         $(formbuild).find("textarea#explanation").val(data.explanation);
-                                         $(formbuild).find("select#type").val(data.type);
+                                         $("#name").val(data.name);
+                                         $("#cognomen").val(data.cognomen);
+                                         $("#explanation").val(data.explanation);
+                                         $("#type").val(data.type);
+                                         $("#short_name").val(data.short_name);
+                                         $("#display_order").val(data.display_order);
                                          if (data.measurement_unit) {
-                                             $(formbuild).find("select#measurement_unit").val(data.measurement_unit.id);
+                                             $(formbuild).find("#measurement_unit").val(data.measurement_unit.id);
                                          }
                                          if (data.image_user_file) {
-                                             $("input#arquivo_imagem_variavel").after("<br /><img src='" + data.image_user_file.public_url + "' border='0' style='max-height: 240px' class='imagem_preview'>");
+                                             $("#arquivo_imagem_variavel").after("<br /><img src='" + data.image_user_file.public_url + "' border='0' style='max-height: 240px' class='imagem_preview'>");
                                          }
-                                         $(formbuild).find("select#period").val(data.period);
+                                         $(formbuild).find("#period").val(data.period);
 
-                                         $(formbuild).find("select#source").val(data.source);
+                                         $(formbuild).find("#source").val(data.source);
 
-                                         if (!($(formbuild).find("select#source").val() == data.source)) {
-                                             $(formbuild).find("select#source").append($("<option></option>").val(data.source).html(data.source).attr("source-id", '?'));
-                                             $(formbuild).find("select#source").val(data.source);
+                                         if (!($(formbuild).find("#source").val() == data.source)) {
+                                             $(formbuild).find("#source").append($("<option></option>").val(data.source).html(data.source).attr("source-id", '?'));
+                                             $(formbuild).find("#source").val(data.source);
                                          }
-                                         if ($(formbuild).find("select#source option:selected").val() != "") {
-                                             $("#dashboard-content .content a#delete-source").show();
+                                         if ($(formbuild).find("#source option:selected").val() != "") {
+                                             $("#delete-source").show();
                                          }
 
                                          if (data.is_basic == 1) {
-                                             $(formbuild).find("input#is_basic").attr("checked", true);
+                                             $("#is_basic").attr("checked", true);
                                          } else {
-                                             $(formbuild).find("input#is_basic").attr("checked", false);
+                                             $("#is_basic").attr("checked", false);
                                          }
                                          break;
                                  }
@@ -3888,8 +3890,8 @@
                      }
 
 
-                    var clickedButton = $("#dashboard-content .content .botao-form[ref='enviar']");
-                    clickedButton.click(function() {
+                     var clickedButton = $("#dashboard-content .content .botao-form[ref='enviar']");
+                     clickedButton.click(function() {
                          if (clickedButton.attr("is-disabled") == 1) return false;
 
                          resetWarnings();
@@ -3952,17 +3954,19 @@
                                      });
                                  }
 
-                                 if ($("#cognomen").val()) {
-                                     args.push({
-                                         name: "variable." + action + ".cognomen",
-                                         value: $("#cognomen").val()
-                                     });
-                                 } else {
-                                     args.push({
-                                         name: "variable." + action + ".cognomen",
-                                         value: ''
-                                     });
-                                 }
+                                 $.each( ['cognomen', 'short_name', 'display_order'], function(  i, fd ) {
+                                     if ($("#" + fd).val()) {
+                                         args.push({
+                                             name: "variable." + action + "." + fd,
+                                             value: $("#" + fd).val()
+                                         });
+                                     } else {
+                                         args.push({
+                                             name: "variable." + action + "." + fd,
+                                             value: ''
+                                         });
+                                     }
+                                 });
 
                                  if ($("#is_basic").prop("checked")) {
                                      args.push({
@@ -4022,8 +4026,8 @@
                                                  break;
                                          }
 
-                                        $(clickedButton).html("Enviar");
-                                        $(clickedButton).attr("is-disabled", 0);
+                                         $(clickedButton).html("Enviar");
+                                         $(clickedButton).attr("is-disabled", 0);
                                      }
                                  });
                              };
