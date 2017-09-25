@@ -3843,32 +3843,34 @@
                              success: function(data, status, jqXHR) {
                                  switch (jqXHR.status) {
                                      case 200:
-                                         $(formbuild).find("input#name").val(data.name);
-                                         $(formbuild).find("input#cognomen").val(data.cognomen);
-                                         $(formbuild).find("textarea#explanation").val(data.explanation);
-                                         $(formbuild).find("select#type").val(data.type);
+                                         $("#name").val(data.name);
+                                         $("#cognomen").val(data.cognomen);
+                                         $("#explanation").val(data.explanation);
+                                         $("#type").val(data.type);
+                                         $("#short_name").val(data.short_name);
+                                         $("#display_order").val(data.display_order);
                                          if (data.measurement_unit) {
-                                             $(formbuild).find("select#measurement_unit").val(data.measurement_unit.id);
+                                             $(formbuild).find("#measurement_unit").val(data.measurement_unit.id);
                                          }
                                          if (data.image_user_file) {
-                                             $("input#arquivo_imagem_variavel").after("<br /><img src='" + data.image_user_file.public_url + "' border='0' style='max-height: 240px' class='imagem_preview'>");
+                                             $("#arquivo_imagem_variavel").after("<br /><img src='" + data.image_user_file.public_url + "' border='0' style='max-height: 240px' class='imagem_preview'>");
                                          }
-                                         $(formbuild).find("select#period").val(data.period);
+                                         $(formbuild).find("#period").val(data.period);
 
-                                         $(formbuild).find("select#source").val(data.source);
+                                         $(formbuild).find("#source").val(data.source);
 
-                                         if (!($(formbuild).find("select#source").val() == data.source)) {
-                                             $(formbuild).find("select#source").append($("<option></option>").val(data.source).html(data.source).attr("source-id", '?'));
-                                             $(formbuild).find("select#source").val(data.source);
+                                         if (!($(formbuild).find("#source").val() == data.source)) {
+                                             $(formbuild).find("#source").append($("<option></option>").val(data.source).html(data.source).attr("source-id", '?'));
+                                             $(formbuild).find("#source").val(data.source);
                                          }
-                                         if ($(formbuild).find("select#source option:selected").val() != "") {
-                                             $("#dashboard-content .content a#delete-source").show();
+                                         if ($(formbuild).find("#source option:selected").val() != "") {
+                                             $("#delete-source").show();
                                          }
 
                                          if (data.is_basic == 1) {
-                                             $(formbuild).find("input#is_basic").attr("checked", true);
+                                             $("#is_basic").attr("checked", true);
                                          } else {
-                                             $(formbuild).find("input#is_basic").attr("checked", false);
+                                             $("#is_basic").attr("checked", false);
                                          }
                                          break;
                                  }
@@ -3887,7 +3889,11 @@
                          });
                      }
 
-                     $("#dashboard-content .content .botao-form[ref='enviar']").click(function() {
+
+                     var clickedButton = $("#dashboard-content .content .botao-form[ref='enviar']");
+                     clickedButton.click(function() {
+                         if (clickedButton.attr("is-disabled") == 1) return false;
+
                          resetWarnings();
                          if ($(this).parent().parent().find("#name").val() == "") {
                              $(".form-aviso").setWarning({
@@ -3904,114 +3910,151 @@
 
                          } else {
 
-                             if ($.getUrlVar("option") == "add") {
-                                 var action = "create";
-                                 var method = "POST";
-                                 var url_action = api_path + "/api/variable";
-                             } else {
-                                 var action = "update";
-                                 var method = "POST";
-                                 var url_action = $.getUrlVar("url");
-                             }
+                             var sendForm = function() {
 
-                             args = [{
-                                 name: "api_key",
-                                 value: $.cookie("key")
-                             }, {
-                                 name: "variable." + action + ".name",
-                                 value: $(this).parent().parent().find("#name").val()
-                             }, {
-                                 name: "variable." + action + ".explanation",
-                                 value: $(this).parent().parent().find("#explanation").val()
-                             }, {
-                                 name: "variable." + action + ".type",
-                                 value: $(this).parent().parent().find("#type option:selected").val()
-                             }, {
-                                 name: "variable." + action + ".measurement_unit_id",
-                                 value: $(this).parent().parent().find("#measurement_unit option:selected").val()
-                             }, {
-                                 name: "variable." + action + ".period",
-                                 value: $(this).parent().parent().find("#period option:selected").val()
-                             }];
-
-                             args.push({
-                                 name: "variable." + action + ".source",
-                                 value: $(this).parent().parent().find("#source option:selected").val()
-                             });
-
-                             if ($(this).parent().parent().find("#cognomen").val()) {
-                                 args.push({
-                                     name: "variable." + action + ".cognomen",
-                                     value: $(this).parent().parent().find("#cognomen").val()
-                                 });
-                             } else {
-                                 args.push({
-                                     name: "variable." + action + ".cognomen",
-                                     value: ''
-                                 });
-                             }
-
-                             if ($(this).parent().parent().find("#is_basic").prop("checked")) {
-                                 args.push({
-                                     name: "variable." + action + ".is_basic",
-                                     value: 1
-                                 });
-                             } else {
-                                 args.push({
-                                     name: "variable." + action + ".is_basic",
-                                     value: 0
-                                 });
-                             }
-
-                             $("#dashboard-content .content .botao-form[ref='enviar']").hide();
-                             $.ajax({
-                                 type: method,
-                                 dataType: 'json',
-                                 url: url_action,
-                                 data: args,
-                                 success: function(data, status, jqXHR) {
-                                     $("#aviso").setWarning({
-                                         msg: "Operação efetuada com sucesso.".render2({
-                                             codigo: jqXHR.status
-                                         })
-                                     });
-                                     location.hash = "#!/" + getUrlSub();
-                                 },
-                                 error: function(data) {
-                                     switch (data.status) {
-                                         case 400:
-
-                                             var nomecodigo = $.trataErro(data);
-
-                                             if (/cognomen\.invalid/.test(nomecodigo)) {
-                                                 $("#aviso").setWarning({
-                                                     msg: "Erro ao $$operacao. Este nome já foi utilizado em outra váriavel.".render2({
-                                                         codigo: nomecodigo,
-                                                         operacao: txtOption
-                                                     })
-                                                 });
-                                             } else if (/explanation\./.test(nomecodigo)) {
-                                                 $("#aviso").setWarning({
-                                                     msg: "Erro ao $$operacao. Explicação inválida.".render2({
-                                                         codigo: nomecodigo,
-                                                         operacao: txtOption
-                                                     })
-                                                 });
-
-                                             } else {
-
-                                                 $("#aviso").setWarning({
-                                                     msg: "Erro ao $$operacao. ($$codigo)".render2({
-                                                         codigo: nomecodigo,
-                                                         operacao: txtOption
-                                                     })
-                                                 });
-                                             }
-                                             break;
-                                     }
-                                     $("#dashboard-content .content .botao-form[ref='enviar']").show();
+                                 if ($.getUrlVar("option") == "add") {
+                                     var action = "create";
+                                     var method = "POST";
+                                     var url_action = api_path + "/api/variable";
+                                 } else {
+                                     var action = "update";
+                                     var method = "POST";
+                                     var url_action = $.getUrlVar("url");
                                  }
-                             });
+
+                                 args = [{
+                                     name: "api_key",
+                                     value: $.cookie("key")
+                                 }, {
+                                     name: "variable." + action + ".name",
+                                     value: $("#name").val()
+                                 }, {
+                                     name: "variable." + action + ".explanation",
+                                     value: $("#explanation").val()
+                                 }, {
+                                     name: "variable." + action + ".type",
+                                     value: $("#type option:selected").val()
+                                 }, {
+                                     name: "variable." + action + ".measurement_unit_id",
+                                     value: $("#measurement_unit option:selected").val()
+                                 }, {
+                                     name: "variable." + action + ".period",
+                                     value: $("#period option:selected").val()
+                                 }];
+
+                                 args.push({
+                                     name: "variable." + action + ".source",
+                                     value: $("#source option:selected").val()
+                                 });
+
+                                 if (files_sent_response['imagem_variavel']) {
+                                     args.push({
+                                         name: "variable." + action + ".image_user_file_id",
+                                         value: files_sent_response['imagem_variavel']['id']
+                                     });
+                                 }
+
+                                 $.each( ['cognomen', 'short_name', 'display_order'], function(  i, fd ) {
+                                     if ($("#" + fd).val()) {
+                                         args.push({
+                                             name: "variable." + action + "." + fd,
+                                             value: $("#" + fd).val()
+                                         });
+                                     } else {
+                                         args.push({
+                                             name: "variable." + action + "." + fd,
+                                             value: ''
+                                         });
+                                     }
+                                 });
+
+                                 if ($("#is_basic").prop("checked")) {
+                                     args.push({
+                                         name: "variable." + action + ".is_basic",
+                                         value: 1
+                                     });
+                                 } else {
+                                     args.push({
+                                         name: "variable." + action + ".is_basic",
+                                         value: 0
+                                     });
+                                 }
+
+                                 $.ajax({
+                                     type: method,
+                                     dataType: 'json',
+                                     url: url_action,
+                                     data: args,
+                                     success: function(data, status, jqXHR) {
+                                         $("#aviso").setWarning({
+                                             msg: "Operação efetuada com sucesso.".render2({
+                                                 codigo: jqXHR.status
+                                             })
+                                         });
+                                         location.hash = "#!/" + getUrlSub();
+                                     },
+                                     error: function(data) {
+                                         switch (data.status) {
+                                             case 400:
+
+                                                 var nomecodigo = $.trataErro(data);
+
+                                                 if (/cognomen\.invalid/.test(nomecodigo)) {
+                                                     $("#aviso").setWarning({
+                                                         msg: "Erro ao $$operacao. Este nome já foi utilizado em outra váriavel.".render2({
+                                                             codigo: nomecodigo,
+                                                             operacao: txtOption
+                                                         })
+                                                     });
+                                                 } else if (/explanation\./.test(nomecodigo)) {
+                                                     $("#aviso").setWarning({
+                                                         msg: "Erro ao $$operacao. Explicação inválida.".render2({
+                                                             codigo: nomecodigo,
+                                                             operacao: txtOption
+                                                         })
+                                                     });
+
+                                                 } else {
+
+                                                     $("#aviso").setWarning({
+                                                         msg: "Erro ao $$operacao. ($$codigo)".render2({
+                                                             codigo: nomecodigo,
+                                                             operacao: txtOption
+                                                         })
+                                                     });
+                                                 }
+                                                 break;
+                                         }
+
+                                         $(clickedButton).html("Enviar");
+                                         $(clickedButton).attr("is-disabled", 0);
+                                     }
+                                 });
+                             };
+
+
+                             var files = ["imagem_variavel"];
+
+                             files_sent = [];
+                             for (i = 0; i < files.length; i++) {
+                                 if ($(".form #arquivo_" + files[i]).val() != undefined) {
+                                     if ($(".form #arquivo_" + files[i]).val() != "") {
+                                         files_sent.push(files[i]);
+                                     }
+                                 }
+                             }
+                             cont_files_sent = 0;
+
+                             $(clickedButton).html("Salvando...");
+                             $(clickedButton).attr("is-disabled", 1);
+
+                             if (files_sent.length > 0)
+                                 $(clickedButton).html("Enviando Arquivos...");
+
+                             sendFiles(sendForm, clickedButton);
+
+
+
                          }
                      });
 
@@ -9978,8 +10021,8 @@
                          }
                      });
 
-                    var clickedButton = $("#dashboard-content .content .botao-form[ref='enviar']");
-                    clickedButton.click(function() {
+                     var clickedButton = $("#dashboard-content .content .botao-form[ref='enviar']");
+                     clickedButton.click(function() {
                          if (clickedButton.attr("is-disabled") == 1) return false;
 
                          resetWarnings();
@@ -9989,7 +10032,7 @@
                              });
                          } else {
 
-                            var sendForm = function() {
+                             var sendForm = function() {
 
                                  if ($.getUrlVar("option") == "add") {
                                      var action = "create";
@@ -10052,8 +10095,8 @@
 
                                      }
                                  });
-                            };
-                            var files = ["imagem_pagina"];
+                             };
+                             var files = ["imagem_pagina"];
 
                              files_sent = [];
                              for (i = 0; i < files.length; i++) {
