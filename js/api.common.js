@@ -14,7 +14,10 @@ if (!cur_lang || do_not_use_lex) {
     });
 }
 
-
+function nl2br (str, is_xhtml) {
+    var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
+    return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ breakTag +'$2');
+}
 
 $.assocArraySize = function(obj) {
     var size = 0,

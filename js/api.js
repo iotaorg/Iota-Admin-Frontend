@@ -4796,7 +4796,7 @@
                              if (erro == 0) {
                                  if (!retorno.error) {
                                      $(".value_via_file .form-aviso").setWarning({
-                                         msg: "Arquivo enviado com sucesso<br/>" + retorno.status
+                                         msg: "Arquivo enviado com sucesso<br/>" + nl2br(retorno.status)
                                      });
                                      $(clickedButton).html("Enviar");
                                      $(clickedButton).attr("is-disabled", 0);
