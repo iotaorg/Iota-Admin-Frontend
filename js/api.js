@@ -9749,7 +9749,7 @@
                                  return a.localeCompare(b);
                              });
                              $.each(data.menus, function(index, item) {
-                                 if (item.menu_id == item.id) {
+                                 if (!item.menu_id) {
                                      $("#dashboard-content .content select#menu_id").append($("<option></option>").val(item.id).html(item.title));
                                  }
                              });
