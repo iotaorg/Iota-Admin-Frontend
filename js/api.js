@@ -9783,7 +9783,7 @@
                              });
                              $.each(data.pages, function(index, item) {
                                  if (!data.page_id) {
-                                     $("#dashboard-content .content select#page_id").append($("<option></option>").val(item.id).html(item.title + " - url: " + item.title_url));
+                                     $("#dashboard-content .content select#page_id").append($("<option></option>").val(item.id).html(item.title));
                                  }
                              });
                          }
