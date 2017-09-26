@@ -9758,9 +9758,6 @@
 
 
                      var $position = $("#position");
-                     if (user_info.institute.metadata.include_fixed_menu) {
-                         $position.append($("<option></option>").val(user_info.institute.metadata.include_fixed_menu.id).html(user_info.institute.metadata.include_fixed_menu.label));
-                     }
                      for (i = 0; i <= 10; i++) {
                          $position.append($("<option></option>").val(i).html(i));
                      }
