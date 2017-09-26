@@ -3954,7 +3954,7 @@
                                      });
                                  }
 
-                                 $.each( ['cognomen', 'short_name', 'display_order'], function(  i, fd ) {
+                                 $.each(['cognomen', 'short_name', 'display_order'], function(i, fd) {
                                      if ($("#" + fd).val()) {
                                          args.push({
                                              name: "variable." + action + "." + fd,
@@ -9734,7 +9734,7 @@
                          content: "Título do Menu."
                      }));
 
-                     $("#dashboard-content .content select#menu_id").append($("<option></option>").val("").html("Nenhum"));
+                     $("#dashboard-content .content select#menu_id").append($("<option></option>").val("").html("Raiz / Nenhum menu anterior"));
                      $.ajax({
                          async: false,
                          type: 'GET',
@@ -9749,19 +9749,24 @@
                                  return a.localeCompare(b);
                              });
                              $.each(data.menus, function(index, item) {
-                                 if (!data.menu_id) {
+                                 if (item.menu_id == item.id) {
                                      $("#dashboard-content .content select#menu_id").append($("<option></option>").val(item.id).html(item.title));
                                  }
                              });
                          }
                      });
 
+
+                     var $position = $("#position");
+                     if (user_info.institute.metadata.include_fixed_menu) {
+                         $position.append($("<option></option>").val(user_info.institute.metadata.include_fixed_menu.id).html(user_info.institute.metadata.include_fixed_menu.label));
+                     }
                      for (i = 0; i <= 10; i++) {
-                         $("#dashboard-content .content select#position").append($("<option></option>").val(i).html(i));
+                         $position.append($("<option></option>").val(i).html(i));
                      }
 
                      $("#dashboard-content .content select#page_id").append($("<option></option>").val("").html("$$e".render({
-                         e: 'Nenhuma'
+                         e: 'Nenhuma página'
                      })));
                      $.ajax({
                          async: false,
