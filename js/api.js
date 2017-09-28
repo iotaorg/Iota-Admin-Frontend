@@ -9936,7 +9936,14 @@
                      });
 
                      var newform = [];
-
+                     newform.push({
+                         label: "Tipo",
+                         input: ["select,page_type"]
+                     });
+                     newform.push({
+                         label: "TemplateID",
+                         input: ["text,template_id"]
+                     });
                      newform.push({
                          label: "Título",
                          input: ["text,title,itext"]
@@ -9949,11 +9956,46 @@
                          label: "Conteúdo",
                          input: ["textarea,page_content"]
                      });
+                     newform.push({
+                         label: "Template ou YAML",
+                         input: ["textarea,page_content_pure"]
+                     });
 
                      var formbuild = $("#dashboard-content .content").append(buildForm(newform, txtOption));
                      $(formbuild).find("div .field:odd").addClass("odd");
                      $(formbuild).find(".form").width(800);
                      $(formbuild).find(".form-buttons").width($(formbuild).find(".form").width());
+
+                     $("#page_type").append($("<option></option>").val("html").html("HTML - Página"));
+                     $("#page_type").append($("<option></option>").val("yaml").html("Configuração - YAML"));
+                     $("#page_type").append($("<option></option>").val("template").html("Template"));
+                     $('#page_content_pure').css('width', '100%');
+                     $('#page_content_pure').css('min-height', '300px');
+
+                     $("#page_type").change(function() {
+
+                         if ($("#page_type").val() == 'html') {
+
+                             $('#page_content_pure').parents('.field:first').hide();
+                             $('#template_id').parents('.field:first').hide();
+
+                             $('#page_content').parents('.field:first').show();
+                         } else {
+
+                             $('#page_content_pure').parents('.field:first').show();
+                             $('#template_id').parents('.field:first').show();
+                             $('#page_content').parents('.field:first').hide();
+
+                         }
+
+                         if ($("#page_type").val() == 'template') {
+                             $('#template_id').parents('.field:first').hide();
+                             $('#arquivo_imagem_pagina').parents('.field:first').hide();
+                         }
+
+
+                     });
+
 
                      $(formbuild).find("#title").qtip($.extend(true, {}, qtip_input, {
                          content: "Título da Página."
@@ -9970,8 +10012,14 @@
                              success: function(data, status, jqXHR) {
                                  switch (jqXHR.status) {
                                      case 200:
-                                         $(formbuild).find("input#title").val(data.title);
-                                         $(formbuild).find("textarea#page_content").val(data.content);
+                                         $('#title').val(data.title);
+                                         $('#page_content').val(data.content);
+                                         $('#page_content_pure').val(data.content);
+                                         $('#page_type').val(data['type']);
+                                         $('#template_id').val(data.template_id);
+
+
+
 
                                          if (data.image_user_file) {
                                              $("input#arquivo_imagem_pagina").after("<br /><img src='" + data.image_user_file.public_url + "' border='0' style='max-height: 240px' class='imagem_preview'>");
@@ -9994,6 +10042,7 @@
                          });
                      }
 
+                     $('#page_type').change();
                      var editor = new TINY.editor.edit('editor', {
                          id: 'page_content',
                          width: 600,
@@ -10046,18 +10095,35 @@
                                      var url_action = $.getUrlVar("url");
                                  }
 
-                                 editor.post();
+                                 var $content;
+
+
+                                 if ($("#page_type").val() == 'html') {
+                                     editor.post();
+
+                                     $content = $("#page_content").val();
+                                 } else {
+                                     $content = $("#page_content_pure").val();
+                                 }
 
                                  args = [{
-                                     name: "api_key",
-                                     value: $.cookie("key")
-                                 }, {
-                                     name: "page." + action + ".title",
-                                     value: $("#title").val()
-                                 }, {
-                                     name: "page." + action + ".content",
-                                     value: $("#page_content").val()
-                                 }];
+                                         name: "api_key",
+                                         value: $.cookie("key")
+                                     },
+                                     {
+                                         name: "page." + action + ".type",
+                                         value: $("#page_type").val()
+                                     }, {
+                                         name: "page." + action + ".template_id",
+                                         value: $("#template_id").val()
+                                     }, {
+                                         name: "page." + action + ".title",
+                                         value: $("#title").val()
+                                     }, {
+                                         name: "page." + action + ".content",
+                                         value: $content
+                                     }
+                                 ];
 
                                  if (files_sent_response['imagem_pagina']) {
                                      args.push({
