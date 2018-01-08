@@ -10303,6 +10303,11 @@
                      });
 
                      newform.push({
+                         label: "Texto para imagem",
+                         input: ["text,image_caption,itext"]
+                     });
+
+                     newform.push({
                          label: "Descrição",
                          input: ["textarea,description"]
                      });
@@ -10402,6 +10407,8 @@
                                          }
 
                                          $("#tags").val(data.tags);
+                                         $("#image_caption").val(data.image_caption);
+
                                          $("#axis_id").val(data.axis_id).attr("selected-id", data.axis_id);
 
 
@@ -10572,6 +10579,10 @@
                                      });
                                  }
 
+                                 args.push({
+                                     name: "best_pratice." + action + ".image_caption",
+                                     value: $("#image_caption").val()
+                                 });
 
                                  if (user_info.institute.metadata.bp_axis_aux1_enabled && user_info.institute.metadata.axis_aux1) {
                                      args.push({
