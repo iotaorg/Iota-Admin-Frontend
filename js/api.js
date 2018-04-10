@@ -5457,7 +5457,7 @@
                          resetWarnings();
                          location.hash = "#!/" + getUrlSub() + "?option=add";
                      });
-
+/*
                      var data_variables = [];
                      $.ajax({
                          async: false,
@@ -5499,12 +5499,12 @@
                          }
 
                      });
-
+*/
                      $("#results").dataTable({
                          iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
                          "bProcessing": true,
-                         "sAjaxSource": api_path + '/api/indicator?use=edit&api_key=$$key&content-type=application/json&lang=$$lang&columns=name,formula,created_at,url,_,_'.render2({
+                         "sAjaxSource": api_path + '/api/indicator?use=edit&api_key=$$key&content-type=application/json&lang=$$lang&columns=name,formula_human,created_at,url,_,_'.render2({
                              lang: cur_lang,
                              key: $.cookie("key")
                          }),
@@ -5526,14 +5526,14 @@
                                  return $.format.date(sVal, "dd/MM/yyyy HH:mm:ss");
                              },
                              "aTargets": [2]
-                         }, {
+                         }, /*{
                              "fnRender": function(oObj, sVal) {
                                  return "$$x".render({
                                      x: formataFormula(sVal, data_variables, data_vvariables)
                                  });
                              },
                              "aTargets": [1]
-                         }, ],
+                         },*/ ],
                          "aaSorting": [
                              [2, "desc"],
                              [0, "asc"]
