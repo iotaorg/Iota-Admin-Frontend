@@ -7558,11 +7558,10 @@
                                  e: 'Pesquisar'
                              }));
 
-                             function carregaRedesEdit() {
-
-                                 $.loading();
+                             function carregaFiltroNetworks() {
                                  $.ajax({
                                      type: 'GET',
+                                     async: true,
                                      dataType: 'json',
                                      url: api_path + '/api/network?user_id=$$user&api_key=$$key'.render2({
                                          key: $.cookie("key"),
@@ -7602,7 +7601,6 @@
                                              $("#dashboard-content .content .variable-filter .form-pesquisa .variable").hide();
                                              $("#dashboard-content .content .variable-filter .form-pesquisa .botao").hide();
                                          }
-                                         $.loading.hide();
                                      }
                                  });
                              }
@@ -7614,7 +7612,7 @@
                                  });
 
                              });
-                             carregaRedesEdit();
+                             carregaFiltroNetworks();
 
                              $("#dashboard-content .content .indicadores_list .zoom").click(function() {
                                  var target = $(this).parent().parent();
