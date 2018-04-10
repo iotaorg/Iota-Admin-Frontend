@@ -5457,49 +5457,7 @@
                          resetWarnings();
                          location.hash = "#!/" + getUrlSub() + "?option=add";
                      });
-/*
-                     var data_variables = [];
-                     $.ajax({
-                         async: false,
-                         type: 'GET',
-                         dataType: 'json',
-                         url: api_path + '/api/variable?api_key=$$key'.render2({
-                             key: $.cookie("key"),
-                             userid: $.cookie("user.id")
-                         }),
-                         success: function(data, textStatus, jqXHR) {
 
-                             $.each(data.variables, function(index, value) {
-                                 data_variables.push({
-                                     "id": data.variables[index].id,
-                                     "name": data.variables[index].name
-                                 });
-                             });
-                         }
-
-                     });
-
-                     var data_vvariables = [];
-                     $.ajax({
-                         async: false,
-                         type: 'GET',
-                         dataType: 'json',
-                         url: api_path + '/api/indicator/variable?api_key=$$key&all_variables=1'.render2({
-                             key: $.cookie("key"),
-                             userid: $.cookie("user.id")
-                         }),
-                         success: function(data, textStatus, jqXHR) {
-
-                             $.each(data.variables, function(index, value) {
-                                 data_vvariables.push({
-                                     "id": data.variables[index].id,
-                                     "name": data.variables[index].name
-                                 });
-                             });
-                         }
-
-                     });
-*/
                      $("#results").dataTable({
                          iDisplayLength: 50,
                          "oLanguage": get_datatable_lang(),
@@ -5526,14 +5484,7 @@
                                  return $.format.date(sVal, "dd/MM/yyyy HH:mm:ss");
                              },
                              "aTargets": [2]
-                         }, /*{
-                             "fnRender": function(oObj, sVal) {
-                                 return "$$x".render({
-                                     x: formataFormula(sVal, data_variables, data_vvariables)
-                                 });
-                             },
-                             "aTargets": [1]
-                         },*/ ],
+                         } ],
                          "aaSorting": [
                              [2, "desc"],
                              [0, "asc"]
@@ -5947,11 +5898,6 @@
                          value: ")",
                          caption: ")",
                          title: "Fecha Parenteses"
-                     }));
-                     $("#formula-editor .operators").append("<div class='op-button' val='$$value' title='$$title'>$$caption</div>".render2({
-                         value: "√",
-                         caption: "√",
-                         title: "Raíz Quadrada"
                      }));
                      $("#formula-editor .operators").append("<div class='op-button' val='$$value' title='$$title'>$$caption</div>".render2({
                          value: "CONCATENAR",
@@ -7356,6 +7302,7 @@
                                      "id": data.indicators[index].id,
                                      "name": data.indicators[index].name,
                                      "formula": data.indicators[index].formula,
+                                     "formula_human": data.indicators[index].formula_human,
                                      "axis_id": data.indicators[index].axis_id,
                                      "axis": data.indicators[index].axis,
                                      "network_configs": data.indicators[index].network_configs,
@@ -7382,44 +7329,6 @@
                                  }),
                                  success: function(data, textStatus, jqXHR) {
                                      data_groups = data.user_indicator_axis;
-                                 }
-                             });
-
-                             var data_variables = [];
-                             $.ajax({
-                                 async: false,
-                                 type: 'GET',
-                                 dataType: 'json',
-                                 url: api_path + '/api/variable?api_key=$$key'.render2({
-                                     key: $.cookie("key"),
-                                     userid: $.cookie("user.id")
-                                 }),
-                                 success: function(data, textStatus, jqXHR) {
-                                     $.each(data.variables, function(index, value) {
-                                         data_variables.push({
-                                             "id": data.variables[index].id,
-                                             "name": data.variables[index].name
-                                         });
-                                     });
-                                 }
-                             });
-
-                             var data_vvariables = [];
-                             $.ajax({
-                                 async: false,
-                                 type: 'GET',
-                                 dataType: 'json',
-                                 url: api_path + '/api/indicator/variable?api_key=$$key'.render2({
-                                     key: $.cookie("key"),
-                                     userid: $.cookie("user.id")
-                                 }),
-                                 success: function(data, textStatus, jqXHR) {
-                                     $.each(data.variables, function(index, value) {
-                                         data_vvariables.push({
-                                             "id": data.variables[index].id,
-                                             "name": data.variables[index].name
-                                         });
-                                     });
                                  }
                              });
 
@@ -7450,6 +7359,7 @@
 
                              //carrega grupos
 
+
                              var indicators_in_groups = [];
                              if (data_groups && data_groups.length > 0) {
                                  indicators_table += "<div class='grupos_list'>$$e".render({
@@ -7467,7 +7377,8 @@
                                                  continue;
                                              }
                                              if (data_indicators[i].id == item.indicator_id) {
-                                                 var formula = formataFormula(data_indicators[i].formula, data_variables, data_vvariables);
+
+                                                 var formula = data_indicators[i].formula_human;
                                                  var tr_class = "folded";
                                                  $.each(data_indicators[i].network_configs, function(index_config, item_config) {
                                                      if (item_config.network_id == user_info.network && item_config.unfolded_in_home == 1) {
@@ -7533,51 +7444,7 @@
                                      }
                                  }
 
-                                 //if (!findInArray(indicators_in_groups,data_indicators[i].id)){ oculta indicadores já listados nos grupos
-
-                                 //                   if (data_indicators[i].axis_id != axis_ant) {
-                                 //                       if (count_i > 0) {
-                                 //                       indicators_table += "</div>";
-                                 //                       }
-                                 //                       indicators_table += "<div class='eixos collapse'><div class='title'>$$axis</div><div class='clear'></div>".render({
-                                 //                       axis: data_indicators[i].axis.name
-                                 //                       });
-                                 //                       axis_ant = data_indicators[i].axis_id;
-                                 //                   }
-                                 //
-                                 //                   var formula = formataFormula(data_indicators[i].formula, data_variables, data_vvariables);
-                                 //
-                                 //                   var tr_class = "folded";
-                                 //                   $.each(data_indicators[i].network_configs, function (index_config, item_config) {
-                                 //                       if (item_config.network_id == user_info.network && item_config.unfolded_in_home == 1) {
-                                 //                       tr_class = "unfolded";
-                                 //                       }
-                                 //                   });
-                                 //
-                                 //                   indicators_table += "<div class='variable $$_tr_class' indicator-id='$$_indicator_id'><div class='name'>$$name</div><div class='formula'>$$fxormula</div><div class='link'><a href='javascript: void(0);' class='icone zoom' title='$$ss' alt='$$ss' indicator-id='$$_id' period='$$_period' aaa=123>$$det</a><a href='$$_hash?option=edit&url=$$_url' class='icone edit' title='$$a' alt='$$a'>editar</a></div><div class='clear'></div><div class='historico-popup'></div></div>".render({
-                                 //                       name: data_indicators[i].name,
-                                 //                       a: 'adicionar valores',
-                                 //                       ss: 'Série Histórica',
-                                 //                       fxormula: formula,
-                                 //                       _hash: "#!/" + getUrlSub(),
-                                 //                       _url: api_path + "/api/indicator/" + data_indicators[i].id,
-                                 //                       _indicator_id: data_indicators[i].id,
-                                 //                       det: 'detalhes',
-                                 //                       _period: data_indicators[i].period,
-                                 //                       _id: data_indicators[i].id,
-                                 //                       _tr_class: tr_class
-                                 //                   });
-                                 //                   indicators_table += "<div class='clear'></div>";
-                                 //                   count_i++;
-                                 //                   //}
                              }
-
-                             //                   indicators_hash.sort;
-
-                             //                   console.log(indicators_hash);
-
-
-
 
                              var count_i = 0;
 
@@ -7601,13 +7468,12 @@
                                      indicators_table += "<div class='eixos collapse'><div class='title'>$$axis</div><div class='clear'></div>".render({
                                          axis: key
                                      });
-                                     //                 console.log(indicators_hash[key][0]);
+
                                      for (i = 0; i < indicators_hash[key].length; i++) {
 
                                          axis_ant = indicators_hash[key][i].axis_id;
 
-                                         //
-                                         var formula = formataFormula(indicators_hash[key][i].formula, data_variables, data_vvariables);
+                                         var formula = data_indicators[i].formula_human;
                                          var tr_class = "folded";
                                          $.each(indicators_hash[key][i].network_configs, function(index_config, item_config) {
                                              if (item_config.network_id == user_info.network && item_config.unfolded_in_home == 1) {
@@ -7650,7 +7516,7 @@
 
                                      for (i = 0; i < indicators_hash['hidden'].length; i++) {
                                          if (indicators_hash['hidden'][i].user_indicator_config && indicators_hash['hidden'][i].user_indicator_config.hide_indicator == 1) {
-                                             var formula = formataFormula(indicators_hash['hidden'][i].formula, data_variables, data_vvariables);
+                                             var formula = indicators_hash['hidden'][i].formula_human;
                                              var tr_class = "folded";
                                              indicators_table += "<div class='variable $$_tr_class' indicator-id='$$_indicator_id'><div class='name'>$$name</div><div class='formula'>$$fxormula</div><div class='link'><a href='$$_hash?option=unhide&url=$$_url&config_id=$$_config_id' class='icone unhide' title='$$e' alt='$$e'>$$m</a></div><div class='clear'></div></div>".render({
                                                  name: indicators_hash['hidden'][i].name,
@@ -8235,52 +8101,8 @@
                                  });
 
                              }
-                             var data_variables = SUPER_CACHE_data_variables;
-                             if (!data_variables) {
-                                 data_variables = [];
-                                 $.ajax({
-                                     async: false,
-                                     cache: true,
-                                     type: 'GET',
-                                     dataType: 'json',
-                                     url: api_path + '/api/variable?api_key=$$key'.render2({
-                                         key: $.cookie("key"),
-                                         userid: $.cookie("user.id")
-                                     }),
-                                     success: function(data, textStatus, jqXHR) {
-                                         $.each(data.variables, function(index, value) {
-                                             data_variables.push({
-                                                 "id": data.variables[index].id,
-                                                 "name": data.variables[index].name
-                                             });
-                                         });
-                                         SUPER_CACHE_data_variables = data_variables;
-                                     }
-                                 });
-                             }
-                             var data_vvariables = [];
-                             $.ajax({
-                                 async: false,
-                                 cache: true,
-                                 type: 'GET',
-                                 dataType: 'json',
-                                 url: api_path + '/api/indicator/variable?api_key=$$key'.render2({
-                                     key: $.cookie("key"),
-                                     userid: $.cookie("user.id")
-                                 }),
-                                 success: function(data, textStatus, jqXHR) {
-                                     $.each(data.variables, function(index, value) {
-                                         data_vvariables.push({
-                                             "id": data.variables[index].id,
-                                             "name": data.variables[index].name
-                                         });
-                                     });
-                                 }
-                             });
 
-                             $("#dashboard-content .content .filter_indicator #textlabel_formula").html("$$e".render({
-                                 e: formataFormula(data_indicator.formula, data_variables, data_vvariables)
-                             }));
+                            $("#dashboard-content .content .filter_indicator #textlabel_formula").html( data_indicator.formula_human );
 
                              $("#dashboard-content .content .filter_indicator #textlabel_periodo").html("$$e".render({
                                  e: variable_periods[data_indicator.period]
@@ -8365,14 +8187,14 @@
                                  });
                              } else if (data_indicator.period == "daily") {
 
-                                 $.each(data_variables, function(index, value) {
-                                     $("#dashboard-content .content .filter_indicator input#date_filter").datepicker({
-                                         dateFormat: 'dd/mm/yy',
-                                         defaultDate: "0",
-                                         changeYear: true,
-                                         changeMonth: true
-                                     });
+
+                                 $("#dashboard-content .content .filter_indicator input#date_filter").datepicker({
+                                     dateFormat: 'dd/mm/yy',
+                                     defaultDate: "0",
+                                     changeYear: true,
+                                     changeMonth: true
                                  });
+
                              }
 
                              $("#dashboard-content .content .filter_indicator #date_filter").change(function() {

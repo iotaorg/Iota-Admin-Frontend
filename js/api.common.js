@@ -2073,6 +2073,7 @@ var buildLogin = function() {
     $("#dashboard #form-login").show();
 }
 
+var __xx_user_alerted=false;
 function formataFormula(formula, variables, vvariables) {
     var operators_caption = {
         "+": "+",
@@ -2083,6 +2084,11 @@ function formataFormula(formula, variables, vvariables) {
         "*": "×",
         "CONCATENAR": ""
     };
+
+    if (!__xx_user_alerted){
+        alert("Por favor aviasar o suporte que [formataFormula] ainda foi executado e informe a URL");
+        __xx_user_alerted = true;
+    }
 
     var new_formula = formula, is_string = /CONCATENAR/i.test(formula);
 
