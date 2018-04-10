@@ -3766,18 +3766,24 @@
                          label: "Período",
                          input: ["select,period,iselect"]
                      });
-                     newform.push({
-                         label: "Imagem",
-                         input: ["file,imagem_variavel,itext"]
-                     });
-                     newform.push({
-                         label: "Nome curto",
-                         input: ["text,short_name,itext"]
-                     });
-                     newform.push({
-                         label: "Ordem",
-                         input: ["text,display_order,itext"]
-                     });
+                     if ((user_info.institute.metadata.show_variable_image == 1)) {
+                         newform.push({
+                             label: "Imagem",
+                             input: ["file,imagem_variavel,itext"]
+                         });
+                     }
+                     if ((user_info.institute.metadata.show_variable_short_name == 1)) {
+                         newform.push({
+                             label: "Nome curto",
+                             input: ["text,short_name,itext"]
+                         });
+                     }
+                     if ((user_info.institute.metadata.show_variable_order == 1)) {
+                         newform.push({
+                             label: "Ordem",
+                             input: ["text,display_order,itext"]
+                         });
+                     }
 
 
                      if (!(user_info.institute.metadata.hide_variable_source == 1)) {
