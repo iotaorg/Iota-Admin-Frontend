@@ -7479,7 +7479,7 @@
 
                                          axis_ant = indicators_hash[key][i].axis_id;
 
-                                         var formula = data_indicators[key][i].formula_human;
+                                         var formula = indicators_hash[key][i].formula_human;
                                          var tr_class = "folded";
                                          $.each(indicators_hash[key][i].network_configs, function(index_config, item_config) {
                                              if (item_config.network_id == user_info.network && item_config.unfolded_in_home == 1) {
