@@ -8636,6 +8636,16 @@
                                                  var cont_sent = 0;
                                                  var cont_returned = 0;
 
+                                                 var should_sync = [true, true, false];
+                                                 var __times= 100;
+
+                                                while(__times-- > 0){
+                                                    should_sync.push( true );
+                                                    should_sync.push( true );
+                                                    should_sync.push( false );
+                                                }
+
+
                                                  while (cont_sent < cont_total) {
                                                      if ($("#dashboard-content .content .filter_result").find("#var_" + data_variables[cont_sent].id).attr("disabled") == "disabled") {
                                                          cont_sent++;
@@ -8730,6 +8740,7 @@
                                                              dataType: 'json',
                                                              url: url,
                                                              data: args,
+                                                             async: should_sync[cont_sent] || false,
                                                              success: function(data, textStatus, jqXHR) {
                                                                  cont_returned++;
                                                              },
