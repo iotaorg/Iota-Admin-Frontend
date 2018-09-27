@@ -11142,7 +11142,7 @@
                      }
 
                      google.load("maps", "3", {
-                         other_params: 'sensor=false&libraries=drawing,geometry',
+                         other_params: 'sensor=false&libraries=drawing,geometry&key=AIzaSyB0ip7QhECY9SaUHjXfCEfbTV-ZH8q7wRI',
                          callback: function() {
                              $("#dashboard-content .content div.form").after("<div id='panel-map'><div id='panel'><button id='edit-button'>Editar forma</button><button id='delete-button'>Apagar forma</button></div><div id='map'></div></div>");
 
@@ -11390,7 +11390,7 @@
                          $("#panel-region #region-list .contents").css("height", $("#panel-map").height() + "px");
 
                          google.load("maps", "3", {
-                             other_params: 'sensor=false&libraries=drawing,geometry',
+                             other_params: 'sensor=false&libraries=drawing,geometry&key=AIzaSyB0ip7QhECY9SaUHjXfCEfbTV-ZH8q7wRI',
                              callback: function() {
 
                                  if (!google.maps.Polygon.prototype.getBounds) {
