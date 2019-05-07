@@ -1,11 +1,7 @@
 #!/bin/bash
 
 export GIT_DIR=$(git rev-parse --show-toplevel)
-export MYIP=$(ip route get 8.8.8.8 | head -1 | cut -d' ' -f8)
-
-if [ -z "$MYIP" ]; then
-    MYIP=$(ip route get 8.8.8.8 | head -1 | cut -d' ' -f7)
-fi
+export MYIP=$(ip -4 addr show docker0 | grep -Po 'inet \K[\d.]+')
 
 echo "Make sure API is listening on $MYIP:5000 ";
 (sleep 1; export X=`docker inspect --format '{{ .NetworkSettings.IPAddress }}' iota-frontend 2>&1`; echo "http://$X/frontend" ) &
