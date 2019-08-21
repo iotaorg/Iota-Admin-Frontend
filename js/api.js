@@ -11717,7 +11717,7 @@
                          input: ["file,programa_metas,itext"]
                      });
                      newform.push({
-                         label: "Imagem do perfil da cidade",
+                         label: "Imagem do<br />perfil da cidade<br /><font size='1'>(630x135 pixels)</font>",
                          input: ["file,imagem_cidade,itext"]
                      });
                      // }
@@ -11725,10 +11725,6 @@
                          newform.push({
                              label: "Logo(imagem)<br /><font size='1'>(altura máx: 80 pixels)</font>",
                              input: ["file,logo_movimento,itext"]
-                         });
-                         newform.push({
-                             label: "Imagem do<br />perfil da cidade<br /><font size='1'>(630x135 pixels)</font>",
-                             input: ["file,imagem_cidade,itext"]
                          });
                      }
                  }
@@ -11828,9 +11824,10 @@
                                          if (data.files.carta_compromis) {
                                              $("input#arquivo_carta_compromisso").after("<br />[<a href='" + data.files.carta_compromis + "' class='link-files' target='_blank'> arquivo atual </a>]");
                                          }
-                                         if (data.files.imagem_cidade) {
-                                             $("input#arquivo_imagem_cidade").after("<br /><img src='" + data.files.imagem_cidade + "' border='0' class='imagem_preview'>");
-                                         }
+                                     }
+
+                                     if (data.files && data.files.imagem_cidade) {
+                                         $("input#arquivo_imagem_cidade").after("<br /><img src='" + data.files.imagem_cidade + "' border='0' class='imagem_preview'>");
                                      }
 
                                      if (user_info.institute.metadata.prestar_contas == 1) {
@@ -11848,9 +11845,7 @@
                                          if (data.files.logo_movimento) {
                                              $("input#arquivo_logo_movimento").after("<br /><img src='" + data.files.logo_movimento + "' border='0' height='60' class='logo_preview'>");
                                          }
-                                         if (data.files.imagem_cidade) {
-                                             $("input#arquivo_imagem_cidade").after("<br /><img src='" + data.files.imagem_cidade + "' border='0' class='imagem_preview'>");
-                                         }
+
                                      }
                                  }
 
