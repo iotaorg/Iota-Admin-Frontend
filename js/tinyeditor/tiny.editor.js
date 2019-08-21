@@ -102,7 +102,7 @@ TINY.editor = function() {
 		var m = '<html><head>', bodyid = obj.bodyid?" id=\"" + obj.bodyid + "\"" : "";
 		if(obj.cssfile) {m += '<link rel="stylesheet" href="' + obj.cssfile + '" />'}
 		if(obj.css) {m += '<style type="text/css">' + obj.css + '</style>'}
-		m += '<link href="http://fonts.googleapis.com/css?family=Asap:400,700" rel="stylesheet" type="text/css" />';
+		m += '<link href="https://fonts.googleapis.com/css?family=Asap:400,700" rel="stylesheet" type="text/css" />';
 		m += '</head><body' + bodyid + ' contenteditable="true">' + (obj.content || this.t.value);
 		m += '</body></html>';
 		this.e.write(m);
