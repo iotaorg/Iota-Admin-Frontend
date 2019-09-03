@@ -278,14 +278,14 @@
                  switch (jqXHR.status) {
                      case 200:
 
+                         resetWarnings();
+                         $("#dashboard #form-login").hide();
+
                         if (data.accmoved){
 
-                            resetWarnings();
                             location.hash = "!/accmoved";
 
                         }else{
-
-                             resetWarnings();
                              $.cookie("user.login", data.login, {
                                  expires: 1,
                                  path: "/"
@@ -298,7 +298,6 @@
                                  expires: 1,
                                  path: "/"
                              });
-                             $("#dashboard #form-login").hide();
                              location.hash = "!/dashboard";
                          }
 
