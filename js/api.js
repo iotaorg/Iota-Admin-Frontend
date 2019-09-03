@@ -277,21 +277,30 @@
              success: function(data, status, jqXHR) {
                  switch (jqXHR.status) {
                      case 200:
-                         resetWarnings();
-                         $.cookie("user.login", data.login, {
-                             expires: 1,
-                             path: "/"
-                         });
-                         $.cookie("user.id", data.id, {
-                             expires: 1,
-                             path: "/"
-                         });
-                         $.cookie("key", data.api_key, {
-                             expires: 1,
-                             path: "/"
-                         });
-                         $("#dashboard #form-login").hide();
-                         location.hash = "!/dashboard";
+
+                        if (data.accmoved){
+
+                            resetWarnings();
+                            location.hash = "!/accmoved";
+
+                        }else{
+
+                             resetWarnings();
+                             $.cookie("user.login", data.login, {
+                                 expires: 1,
+                                 path: "/"
+                             });
+                             $.cookie("user.id", data.id, {
+                                 expires: 1,
+                                 path: "/"
+                             });
+                             $.cookie("key", data.api_key, {
+                                 expires: 1,
+                                 path: "/"
+                             });
+                             $("#dashboard #form-login").hide();
+                             location.hash = "!/dashboard";
+                         }
 
                          break;
                  }
@@ -1525,7 +1534,11 @@
              $.xhrPool.abortAll();
              $("#dashboard #form-login").hide();
              /*  ORGANIZATION  */
-             if (getUrlSub() == "dashboard") {
+             if (getUrlSub() == "accmoved"){
+
+                // do nothing
+
+             } else if (getUrlSub() == "dashboard") {
 
                  if (!findInArray(user_info.roles, "_prefeitura") && !findInArray(user_info.roles, "_movimento")) {
 
