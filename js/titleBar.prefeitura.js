@@ -1,7 +1,7 @@
 var titleBarContent = {
                     "accmoved":{
                         "title": "Aviso",
-                        "tip": "<p>Prezad@ usuári@,</p><p>Os acessos ao sistema foram desabilitados pois estamos migrando os dados para a nova plataforma do Programa Cidades Sustentáveis, que será lançada no dia 18 de setembro, em São Paulo, durante a Conferência Catalisando Futuros Urbanos Sustentáveis. Informações em: https://www.cidadessustentaveis.org.br/conferencia2019. Agradecemos a compreensão.</p><p>Equipe do Programa Cidades Sustentáveis</p>"
+                        "tip": "<p>Prezadx usuárix,</p><p>Os acessos ao sistema foram desabilitados pois estamos migrando os dados para a nova plataforma do Programa Cidades Sustentáveis, que será lançada no dia 18 de setembro, em São Paulo, durante a Conferência Catalisando Futuros Urbanos Sustentáveis. Informações em: https://www.cidadessustentaveis.org.br/conferencia2019. Agradecemos a compreensão.</p><p>Equipe do Programa Cidades Sustentáveis</p>"
                     },
 					"login":{
 								"title": "Entrar",
