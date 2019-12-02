@@ -1591,11 +1591,15 @@ input.admin_checked{
 	text-align: left;
 }
 #panel-region #region-top #region-panel{
-	width: 74%;
+	width: 72%;
 	display: inline-block;
 	background-color: #f5f5f5;
 	border: 1px solid #e0e0e0;
 	margin-left: 6px;
+}
+#region-panel-item2 {
+    display: none;
+    text-align: left;
 }
 #panel-region #region-top #region-panel .contents{
 	text-align: left;

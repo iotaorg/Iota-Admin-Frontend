@@ -1,5 +1,15 @@
  var _is_updating_lexicon = 0;
  var SUPER_CACHE_data_region, SUPER_CACHE_data_variables;
+ var keyboardStatus = {};
+
+$(document).keydown(function (event) {
+    keyboardStatus[event.which] = true;
+});
+
+$(document).keyup(function (event) {
+    delete keyboardStatus[event.which];
+});
+
  $(document).ready(function() {
 
      var original_id = "",
@@ -850,6 +860,28 @@
      var current_map_string = '';
      var map;
 
+     var map_selection_multi_mode_is_on = false;
+
+     var multi_panel_update_count = function(){
+
+        var map_selection_multi_count = 0;
+
+        $.each(current_map_string.split("\n"), function(idx, shapeStr){
+            // pula os que sao string vazias
+            if (shapeStr){
+                map_selection_multi_count++;
+            }
+        });
+
+        if (map_selection_multi_mode_is_on){
+            $('#region-panel-item2').show();
+            $('#contents-number-shapes-selected span.selected').text(map_selection_multi_count);
+        }else{
+            $('#region-panel-item2').hide();
+        }
+
+     }
+
      $map = function() {
 
          var drawingManager;
@@ -894,15 +926,35 @@
              }
          }
 
-         // na hora de salvar usa o conteudo do current_map_string
+         function resetMultiMode(){
+            map_selection_multi_mode_is_on=false;
+            $.each(objTriangle, function(index, item) {
+                 item.setEditable(false);
+                 item.setOptions({
+                     fillColor: color['default']
+                 });
 
+             });
+
+            clearSelection();
+         }
+         // na hora de salvar usa o conteudo do current_map_string
          function clearSelection() {
              if (selectedShape) {
+
+                 if (map_selection_multi_mode_is_on){
+                    _store_string(selectedShape, { remove: true });
+                 }else{
+                     current_map_string = '';
+                 }
+
+                 multi_panel_update_count();
+
                  setColor("default");
                  selectedShape.setEditable(false);
                  selectedShape = null;
-                 current_map_string = '';
                  hide_controls();
+
                  $("#panel-map #edit-button").addClass("disabled");
                  $("#panel-map #delete-button").addClass("disabled");
                  if ($("#region-list .item.selected").length <= 0) {
@@ -912,7 +964,7 @@
          }
 
          function setSelection(shape) {
-             clearSelection();
+            if (!map_selection_multi_mode_is_on) clearSelection();
              selectedShape = shape;
              setColor("select");
              $("#panel-map #edit-button").removeClass("disabled");
@@ -941,13 +993,13 @@
 
              if ($("#region-list .selected").length <= 0 || (!$("#region-list .selected").attr("region-id"))) {
                  $("#aviso").setWarning({
-                     msg: "Nenhuma região selecionada."
+                     msg: "Não é possível salvar sem nenhuma região selecionada."
                  });
                  return;
              } else if (!current_map_string) {
                  $.confirm({
                      'title': 'Confirmação',
-                     'message': 'Nenhuma forma foi selecionada. <br />Deseja salvar assim mesmo?',
+                     'message': 'Nenhum desenho está selecionado. <br />Deseja salvar assim mesmo (remover o desenho da região)?',
                      'buttons': {
                          'Sim': {
                              'class': '',
@@ -996,12 +1048,23 @@
                      region: $("#region-list .selected").attr("region-id")
                  });
 
+                 var theShape = current_map_string;
+                 if (map_selection_multi_mode_is_on){
+                    var newstr = '';
+                    $.each(current_map_string.split("\n"), function(idx, shapeStr){
+                        if (shapeStr){
+                            newstr = newstr + shapeStr + "\n";
+                        }
+                    });
+                    theShape = newstr;
+                 }
+
                  args = [{
                      name: "api_key",
                      value: $.cookie("key")
                  }, {
                      name: "city.region." + action + ".polygon_path",
-                     value: current_map_string
+                     value: theShape
                  }];
 
                  $.ajax({
@@ -1055,12 +1118,20 @@
                  }
              }
              if (selectedShape) {
+                 if (map_selection_multi_mode_is_on){
+                    _store_string(selectedShape, { remove: true });
+                    multi_panel_update_count();
+                 }else{
+                     current_map_string = '';
+
+                 }
+
                  if ($("#region-list").length > 0) {
                      $("#region-list .item[region-index=" + selectedShape.region_index + "]").attr("region-index", "");
                  }
                  selectedShape.setMap(null);
                  objTriangle[selectedShape.region_index] = null;
-                 current_map_string = '';
+
                  hide_controls();
              }
          }
@@ -1104,9 +1175,46 @@
              });
          }
 
-         function _store_string(theShape) {
+         function _store_string(theShape, opts) {
+            if (!opts) opts = {};
+
+//console.log("aa", theShape.getPaths() );
+            var removeCurrent = opts['remove'];
+
              if (typeof theShape.getPath == "function") {
-                 current_map_string = google.maps.geometry.encoding.encodePath(theShape.getPath());
+
+                var tmp = google.maps.geometry.encoding.encodePath(theShape.getPath());
+
+                if (!current_map_string) current_map_string = '';
+
+                if (removeCurrent){
+
+                    var newstr= '';
+                    var parts = current_map_string.split("\n");
+
+                    $.each(parts, function(idx, shapeStr){
+                        if (shapeStr){
+                           if (shapeStr != tmp){
+                                newstr = newstr + shapeStr + "\n";
+                            }
+                        }
+                    });
+
+                    current_map_string = newstr;
+                }else{
+
+                    var not_exists = current_map_string.indexOf(tmp) == -1;
+                    if (not_exists){
+                        if ( map_selection_multi_mode_is_on ){
+                            current_map_string = current_map_string ? current_map_string + "\n" + tmp : tmp;
+                        }else{
+                            current_map_string = tmp;
+                        }
+                    }
+                }
+
+
+
              }
              show_controls();
          }
@@ -1114,11 +1222,19 @@
          function _addPolygon(args) {
              if (!(current_map_string) && !(args.map_string) && !(args.kml_string)) return;
 
+             var triangleCoords;
+
              if (!args.kml_string) {
+                 // WTH, isso de setar o current_map_string como default eh confuso demais!
+
                  if (current_map_string && !(args.map_string)) args.map_string = current_map_string
-                 var triangleCoords = google.maps.geometry.encoding.decodePath(args.map_string);
+                 var arr = [];
+                 $.each(args.map_string.split("\n"), function(idx, shape){
+                    arr.push(google.maps.geometry.encoding.decodePath(shape));
+                 });
+                 triangleCoords = arr;
              } else {
-                 var triangleCoords = [];
+                 triangleCoords = [];
 
                  $.each(args.kml_string.latlng, function(indexx, lnt) {
                      triangleCoords.push(new google.maps.LatLng(lnt[1], lnt[0]));
@@ -1150,16 +1266,31 @@
              if (args.focus) map.fitBounds(objTriangle[index].getBounds());
 
              google.maps.event.addListener(objTriangle[index], 'click', function() {
-                 if ($("#region-list").length > 0) {
-                     if ($("#region-list .item[region-index=" + this.region_index + "]").length > 0) {
-                         $("#region-list .item").removeClass("selected");
-                         $("#region-list .item[region-index=" + this.region_index + "]").addClass("selected");
-                         $.scrollToRegionList(this.region_index);
-                         $.setSelectedRegion();
+
+                var shift_is_pressed = keyboardStatus['16'];
+
+                if (shift_is_pressed || map_selection_multi_mode_is_on){
+
+                    if (!map_selection_multi_mode_is_on){
+                        map_selection_multi_mode_is_on = true;
+                    }
+
+                    setSelection(this);
+                    _store_string(this);
+
+                    multi_panel_update_count();
+                }else{
+                     if ($("#region-list").length > 0) {
+                         if ($("#region-list .item[region-index=" + this.region_index + "]").length > 0) {
+                             $("#region-list .item").removeClass("selected");
+                             $("#region-list .item[region-index=" + this.region_index + "]").addClass("selected");
+                             $.scrollToRegionList(this.region_index);
+                             $.setSelectedRegion();
+                         }
                      }
+                     setSelection(this);
+                     _store_string(this);
                  }
-                 setSelection(this);
-                 _store_string(this);
              });
              google.maps.event.addListener(objTriangle[index].getPath(), 'insert_at', function() {
                  _store_string(this);
@@ -1328,7 +1459,8 @@
              editPolygon: _editPolygon,
              deleteAllShapes: _deleteAllShapes,
              getObjTriangle: _getObjTriangle,
-             focusAll: _focusAll
+             focusAll: _focusAll,
+             resetMultiMode: resetMultiMode
          };
      }();
 
@@ -11154,7 +11286,7 @@
                      }
 
                      google.load("maps", "3", {
-                         other_params: 'sensor=false&libraries=drawing,geometry&key=AIzaSyC4NfJfPKmuVEqmliE663_31FFq9qt6VOE',
+                         other_params: 'sensor=false&libraries=drawing,geometry,polygon&key=AIzaSyC4NfJfPKmuVEqmliE663_31FFq9qt6VOE',
                          callback: function() {
                              $("#dashboard-content .content div.form").after("<div id='panel-map'><div id='panel'><button id='edit-button'>Editar forma</button><button id='delete-button'>Apagar forma</button></div><div id='map'></div></div>");
 
@@ -11288,14 +11420,48 @@
                  }
              } else if (getUrlSub() == "region-map") {
                  /*  Regiões Setando mapa */
+                var longstring = [
+                "<div id='panel-region'>",
+                "     <div id='region-top'>",
+                "        <div id='list-label'>$$re:</div>",
+                "            <div id='region-panel'>",
+                "                <div class='contents'>",
+                "                  <div id='region-selected'>$$rr: <span class='selected'>$$ax</span></div>",
+                "                </div>",
+                "                <div id='region-panel-item2'>",
+                "                    <div class='contents'>",
+                "                      <div id='contents-number-shapes-selected'>$$rx: <span class='selected'></span>",
+                "                          <button id='cancel-multi-button'>$$ey</button>",
+                "                      </div>",
+                "                    </div>",
+                "                </div>",
+                "            </div>",
+                "        </div>",
+                "        <div id='region-list'>",
+                "            <div class='contents'>",
+                "            </div>",
+                "        </div>",
+                "        <div id='panel-map'>",
+                "            <div id='panel'>",
+                "                <button id='edit-button' class='disabled'>$$ex</button>",
+                "                <button id='delete-button' class='disabled'>$$f</button>",
+                "                <button id='save-button' class='disabled'>$$a</button>",
+                "            </div>",
+                "        <div id='map'>",
+                "        </div>",
+                "    </div>",
+                "</div>",
+                ].join('');
 
-                 $("#dashboard-content .content").append("<div id='panel-region'><div id='region-top'><div id='list-label'>$$re:</div><div id='region-panel'><div class='contents'><div id='region-selected'>$$rr: <span class='selected'>$$ax</span></div></div></div></div><div id='region-list'><div class='contents'></div></div><div id='panel-map'><div id='panel'><button id='edit-button' class='disabled'>$$ex</button><button id='delete-button' class='disabled'>$$f</button><button id='save-button' class='disabled'>$$a</button></div><div id='map'></div></div></div>".render({
+                 $("#dashboard-content .content").append(longstring.render({
                      ax: 'Nenhuma',
                      ex: 'Editar forma',
                      re: 'Regiões',
                      f: 'Apagar forma',
                      rr: 'Região selecionada',
-                     a: 'Associar forma à região selecionada'
+                     a: 'Associar forma à região selecionada',
+                     rx: 'Múltiplos desenhos selecionados',
+                     ey: 'Sair do modo multi seleção',
                  }));
 
                  $("#dashboard-content .content").append("<div class='upload_via_file'></div>");
@@ -11327,11 +11493,16 @@
                  $("#dashboard-content .content #precision").after("<div id='precision-value'>0</div><div id='precision-slider'></div>");
                  $("#dashboard-content .content #precision").remove();
 
+
+                 $("#cancel-multi-button").bind('click', function(e) {
+                    $map.resetMultiMode();
+                 });
+
                  $("#precision-slider").slider({
                      value: 0,
                      min: 0,
                      max: 1000,
-                     step: 10,
+                     step: 5,
                      slide: function(event, ui) {
                          $("#precision-value").text(ui.value);
                      }
@@ -11350,6 +11521,7 @@
                      }),
                      success: function(data, status, jqXHR) {
                          data_regions = data;
+
                          $.each(data.regions, function(index, item) {
                              if (item.depth_level == 2) {
                                  data_region.push({
@@ -11438,7 +11610,7 @@
 
                                  $.each(data_regions.regions, function(index, item) {
                                      if (item.polygon_path) {
-                                         //                                  $map.addPolygon({"map_string": item.polygon_path,"focus": false, "region_id": item.id, "select": false});
+                                         //$map.addPolygon({"map_string": item.polygon_path,"focus": false, "region_id": item.id, "select": false});
                                      }
                                  });
                                  $map.focusAll();
@@ -11449,17 +11621,22 @@
                                      if ($(this).attr("region-id")) {
                                          var region_selected = getRegion($(this).attr("region-id"));
                                          var region_index = $(this).attr("region-index");
+
                                          if ((region_selected) && region_selected.polygon_path) {
-                                             if (!$map.getObjTriangle(region_index)) {
-                                                 $map.addPolygon({
-                                                     "map_string": region_selected.polygon_path,
-                                                     "focus": true,
-                                                     "region_id": region_selected.id,
-                                                     "select": true
-                                                 });
-                                             } else {
-                                                 $map.selectPolygon(region_index);
+
+                                            if (window.confirm("Região "+ $(this).text() +" selecionada. Você deseja adicionar o desenho atual desta no mapa?")){
+                                                 if (!$map.getObjTriangle(region_index)) {
+                                                     $map.addPolygon({
+                                                         "map_string": region_selected.polygon_path,
+                                                         "focus": true,
+                                                         "region_id": region_selected.id,
+                                                         "select": true
+                                                     });
+                                                 } else {
+                                                     $map.selectPolygon(region_index);
+                                                 }
                                              }
+
                                          }
                                      }
                                      $.setSelectedRegion();
@@ -11472,6 +11649,7 @@
                      }
                  });
 
+                var shouldFocusAll = true;
                  $("#dashboard-content .content .upload_via_file .botao-form[ref='atualizar']").click(function() {
                      if (typeof retorno_kml == "undefined") return;
                      if (!retorno_kml) return;
@@ -11490,7 +11668,7 @@
                      resetWarnings();
                      $.confirm({
                          'title': 'Confirmação',
-                         'message': 'As regiões atuais serão apagadas do mapa.<br />Deseja continuar?',
+                         'message': 'Todos os desenhos atuais serão removidos do mapa.<br />Deseja continuar?',
                          'buttons': {
                              'Sim': {
                                  'class': '',
@@ -11522,6 +11700,7 @@
                                      form.attr("target", "iframe_" + file);
                                      form.attr("file", $('#arquivo').val());
                                      form.submit();
+                                     shouldFocusAll = true;
                                      $('#arquivo').attr({
                                          name: original_id,
                                          id: original_id
@@ -11618,17 +11797,22 @@
                              "select": false
                          });
                      });
-                     $map.focusAll();
+
+                     if (shouldFocusAll){
+                        shouldFocusAll = false;
+                        $map.focusAll();
+                    }
                  }
 
                  function getRegion(id) {
-                     var i = "";
+                     var i = -1;
                      $.each(data_regions.regions, function(index, item) {
                          if (item.id == id) {
                              i = index;
                          }
                      });
-                     if (i) {
+
+                     if (i >= 0) {
                          return data_regions.regions[i];
                      } else {
                          return null;
